@@ -126,3 +126,34 @@ Prefer `curl` + bootstrap JSON for aifka. Use `cursor-ide-browser` when:
 - airadar family page is JS-only
 
 Sequence: `browser_tabs` list → `browser_navigate` → snapshot → extract links → unlock.
+
+## Expansion URL recipes (when aifka is empty)
+
+```
+# Official
+https://consensus.app/pricing/
+https://help.consensus.app/en/articles/10064359-how-to-get-a-student-or-clinician-discount
+
+# aifka materials
+https://www.aifka.com/?q=edu
+https://www.aifka.com/?q=%E6%95%99%E8%82%B2%E9%82%AE%E7%AE%B1
+https://www.aifka.com/?kind=payment
+
+# Consumer / 合租 (examples — search live)
+Taobao: Consensus Pro / consensus ai 代充 学生
+合租: site search "Consensus" PremLogin / AccountBoy-class
+
+# Student-adjacent on aifka (other brands — do not confuse)
+https://www.aifka.com/?q=%E5%AD%A6%E7%94%9F
+```
+
+### Official price capture
+
+Use browser CDP `document.body.innerText` on `/pricing` if snapshot is thin. Record Monthly vs Annual toggle state. Student % from Claim / help center — re-check; do not hardcode forever.
+
+### Student product checklist
+
+- [ ] Separated H (official discount) vs I (materials) vs J/C (finished) vs Shared
+- [ ] Official list + student % stated as anchor
+- [ ] Lowest **in-stock** per confirmed type only
+- [ ] Suspicious ¥ floors vs $ official annual flagged

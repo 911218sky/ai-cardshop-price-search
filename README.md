@@ -2,7 +2,7 @@
 
 A portable Markdown skill for **broad-then-narrow** price hunts on Chinese AI card-shop aggregators (aifka, PriceMemo, OpenPrice, airadar) and origin shops (16688, ldxp/wzyp).
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 
 ## 30-second start
 
@@ -18,6 +18,8 @@ A portable Markdown skill for **broad-then-narrow** price hunts on Chinese AI ca
 - Forces a **taxonomy map** before recommendations.
 - Separates Auto换号池 vs 插件 vs 质保成品号 vs 白号/接码 so prices are comparable.
 - Degrades honestly on CAPTCHA / empty channels (no fake shops).
+- **Expansion when indexes miss:** Taobao / 闲鱼 / 合租 / official student Claim / VCC+EDU materials.
+- Always reports **lowest in-stock price within the confirmed type** plus official anchor.
 
 ## When to use
 

@@ -15,7 +15,7 @@ description: >
 license: AGPL-3.0-or-later
 metadata:
   short-description: Broad-then-narrow AI cardshop price hunt via aggregators
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # AI Cardshop Price Search
@@ -30,6 +30,10 @@ Find AI membership / account / refill offers by **indexing aggregators first**, 
 | Shop / SKU memory | https://ai.pricememo.cn | Stable shop IDs, stock notes, origin links |
 | Card-net SKU dump | https://www.openprice.cc/card-products/{slug} | Low-level SKUs: white accounts, plugins, SMS, day cards |
 | Official-ish / 16688 channel map | https://airadar.vip | Good for finished official-tier accounts; weak for refill/plugin |
+| Consumer marketplaces | Taobao / Tmall / 闲鱼 | Long-tail brands missing from aifka (e.g. Consensus) |
+| 合租 / account shops | PremLogin-class, AccountBoy-class | Shared vs private; normalize per month |
+| Official student claim | Brand `/pricing` + help center | Verify current % and list price |
+| Payments materials | https://www.aifka.com/?kind=payment | VCC / visa for Stripe bind |
 
 **Origin shops (after aggregator points you there):**
 
@@ -47,6 +51,30 @@ Find AI membership / account / refill offers by **indexing aggregators first**, 
 - User says: 续杯, 无限续杯, Auto换号, 插件, 成品号, 代充, 白号, 接码, Muse, Cursor, ...
 - User asks: which shop is cheap, who has stock, does 16688 have it, ldxp sellers
 
+
+## When primary indexes miss (required expansion)
+
+If aifka / PriceMemo / OpenPrice / airadar return **0 relevant hits**, do **not** stop. Expand in order until you find the product **or** exhaust the list and say so honestly:
+
+1. **WebSearch** brand + 学生 / student / EDU / 代充 / 成品号 / 合租 / 淘宝 / 闲鱼
+2. **Taobao / Tmall** search (browser); record SKU tiers (共享 vs 独享 vs 代充) — list prices often show the cheapest SKU only
+3. **Xianyu / 闲鱼** if Taobao is thin
+4. **合租 / account marketplaces** (e.g. PremLogin, AccountBoy-class sites)
+5. **Official path**: brand pricing + student/faculty discount help docs
+6. **Materials path** (only if user wants own-account official): EDU mail shops + VCC (`aifka ?kind=payment`) + bind-card services
+7. Community threads for **clues only** — prices still need a live shop/official page
+
+**Stop rule:** After steps 1–6 with still nothing buyable → report not found on card-net; give cheapest verified official/materials path — never invent a shop.
+
+## Lowest price (within confirmed type)
+
+After type lock:
+
+1. Collect all **in-stock** SKUs of that type across expanded platforms.
+2. Normalize to a common unit when possible (per month / per year); keep original currency.
+3. Report **floor price** + next 1–2 backups.
+4. Put **official list price** (and official student % if any) as an anchor row.
+5. Flag suspicious floors (e.g. ¥3–5 "年卡" vs official ~$100+/yr) as likely 共享/junk unless proven 独享.
 ## Non-negotiables
 
 1. **Broad → classify → confirm → deep** — never jump to one shop from a vague "续杯".
@@ -56,6 +84,8 @@ Find AI membership / account / refill offers by **indexing aggregators first**, 
 5. **If CAPTCHA blocks origin** — use aifka/PriceMemo numbers; tell user to re-check origin before pay.
 6. **Domain examples are optional** — Cursor refill case in [examples.md](examples.md) is a worked study.
 7. **Degrade honestly** if aggregators fail — no invented shops or prices.
+8. **Keep expanding platforms** until the SKU is found or the expansion list is exhausted.
+9. **Always state the lowest in-stock price for the confirmed type**, plus official anchor.
 
 ## Modes
 
@@ -72,12 +102,12 @@ Copy and track:
 ```
 Progress:
 - [ ] 1. Scope: product family, user phrase, budget/horizon, mode (scout|deep|lite)
-- [ ] 2. Broad harvest: >=2 aggregators (prefer aifka + PriceMemo or OpenPrice)
+- [ ] 2. Broad harvest: >=2 aggregators; if 0 hits → expand platforms (Taobao/合租/official/materials)
 - [ ] 3. Taxonomy map: cluster hits into delivery types
 - [ ] 4. Confirm target type with user UNLESS already named clearly
 - [ ] 5. Deep pass: only that type — shops, SKUs, price, stock, outbound URLs
 - [ ] 6. Cross-check: second aggregator or shop page; flag OOS / stale
-- [ ] 7. Recommend: cheapest trial + best monthly in-stock; exclude wrong types
+- [ ] 7. Recommend: lowest in-stock of confirmed type + official anchor; exclude wrong types
 - [ ] 8. Cite sources: aggregator URL / shop token / when observed
 ```
 
@@ -124,6 +154,9 @@ WebSearch may discover shop names; **prices must come from aggregator or origin*
 | E | 白号, Free Auto 白号 | Raw accounts (DIY), not a refill service |
 | F | 接码, 实卡 | SMS / phone for registration |
 | G | Other / unclear | Do not recommend until classified |
+| H | 学生优惠, student discount, Claim, SheerID, 教育优惠 | Official student/faculty % off on *your* account |
+| I | 学生认证, 绑卡, EDU邮箱, 虚拟卡, VCC, 3DS | Materials to complete H (mail/card/bind) — cost stack |
+| J | 学生成品号, 学生渠道成品 | Finished account claiming student channel — verify |
 
 In **scout**, show the map with sample SKUs + price bands, then ask which type. Then Step 4.
 
@@ -175,4 +208,4 @@ In **scout**, show the map with sample SKUs + price bands, then ask which type. 
 ## Additional resources
 
 - Query recipes + aifka JSON tips: [reference.md](reference.md)
-- Worked case (Cursor unlimited refill -> type A): [examples.md](examples.md)
+- Worked cases (Cursor refill A; Consensus student Pro): [examples.md](examples.md)

@@ -57,3 +57,67 @@ Tool pages (not shops): YOUGO https://cc.yougoaigc.com/ ; other shop notice http
 - User said type A → stop recommending 插件 / 质保成品号
 - Origin CAPTCHA → keep aggregator prices + origin links for user check
 - OOS cheapest (llz) → do not pretend it is buyable; list as watch
+
+---
+
+# Worked Example 2 — Consensus 学生 Pro (2026-10-26)
+
+> Copy the *expansion* pattern: primary indexes miss → keep going → type map → lowest within type.
+
+## Task
+
+**Goal:** Buy Consensus **学生 Pro** (student-priced Pro), report lowest options.  
+**Mode:** scout → expand → deep.
+
+## Scout — primary indexes
+
+| Source | Query | Result |
+|--------|-------|--------|
+| aifka `?q=consensus` | Consensus | **0 hits** |
+| PriceMemo / OpenPrice / airadar | consensus | No usable Consensus SKU |
+| aifka `?q=学生` | student SKUs | ChatGPT/Kiro/Codex students — **not** Consensus |
+
+**Do not stop.** Run expansion list from SKILL.md.
+
+## Expansion hits
+
+| Channel | What appeared | Notes |
+|---------|---------------|-------|
+| Official `consensus.app/pricing` | Pro **$12/mo billed annually ($144/yr)**; Monthly toggle separate; banner **Student/Faculty/Clinician up to 40% off** | Claim via academic email / NPI |
+| Official help | Students/faculty **40% off**; clinicians 25% | https://help.consensus.app/en/articles/10064359-how-to-get-a-student-or-clinician-discount |
+| Taobao | "consensus ai" 独享/共享/代充 — list from ~¥2.8–5 (often 共享年卡); 独享成品/代充 tiers labeled **15刀** | List price ≠ 独享价 |
+| AccountBoy | Private Pro 1mo **$8.59** / 3mo **$22.06** / 1yr **$42.78** | Not official student; third-party account |
+| PremLogin | ~**$3.32/mo** (12mo) but page also shows 多人共享 | Classify carefully 共享 vs 独享 |
+| aifka edu materials | EDU mail ~¥33–50; Gmail EDU short-rent ~¥0.83 | Materials for type H, not Pro itself |
+| aifka `?kind=payment` | visa 5刀卡 ~¥70 ($10.50) etc. | Stripe bind materials |
+
+## Taxonomy for this product
+
+| Type | Meaning here | Floor observed |
+|------|--------------|----------------|
+| H | Official student 40% on **your** account | Anchor: Pro annual $144 → **~$86.40/yr** after 40%; or use Claim on pricing page for live quote |
+| I | EDU mail + VCC + bind stack | Mail ¥33+ + VCC ¥70+ **plus** H checkout — only if user lacks edu/card |
+| C | Third-party 独享成品 / 代充 | AccountBoy year **$42.78**; Taobao 15刀/mo tiers |
+| Shared | 共享/合租 | Taobao ~¥3–5/yr-looking SKUs; PremLogin ~$3.32/mo — **not** student Pro |
+
+## Lowest-price answer (by type)
+
+1. **True student Pro (H):** Official Claim 40% — verify live checkout; expect ~**$86.4/yr** or ~**$12/mo** student monthly if 40% off $20 (confirm on Claim page). Cheapest **legitimate** path if user is eligible.
+2. **Just need Pro access (C 独享):** AccountBoy private year **$42.78** was lowest clear private annual found that day (re-fetch).
+3. **Do not call 共享 ¥3–5 "学生Pro"** — wrong type.
+
+## Suggest template used
+
+- If user has school email → **H** official Claim first.  
+- If user only wants cheap Pro seat → quote **C** floor + warn not student.  
+- Excluded: shared junk marketed as 年卡.
+
+## Sources
+
+- https://consensus.app/pricing/
+- https://help.consensus.app/en/articles/10064359-how-to-get-a-student-or-clinician-discount
+- https://www.aifka.com/?q=consensus (0)
+- https://www.aifka.com/?kind=payment
+- https://www.accountboy.com/en-us-usd/buy-Consensus
+- https://premlogin.com/zh-TW/product/161
+- Taobao listings titled consensus ai 代充/独享
