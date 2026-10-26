@@ -73,10 +73,6 @@ ai-cardshop-price-search/
 
 Agents should update the Product playbook (and optionally `examples.md`) so the next session starts smarter. See **Knowledge write-back** in `SKILL.md`.
 
-## Related
-
-- Format inspired by [consensus-lit-search](https://github.com/911218sky/consensus-lit-search)
-
 ## License
 
 GNU Affero General Public License v3.0 or later. See [`LICENSE`](LICENSE).
