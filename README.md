@@ -1,42 +1,47 @@
 # AI Cardshop Price Search
 
-A portable Markdown skill for **broad-then-narrow** price hunts on Chinese AI card-shop aggregators (aifka, PriceMemo, OpenPrice, airadar) and origin shops (16688, ldxp/wzyp).
+Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese AI card shops and consumer markets — plus **write-back** of new brand / 暗号 / channel patterns into the skill itself.
 
-**Version:** 1.1.0
+**Version:** 1.3.0  
+**Repo:** https://github.com/911218sky/ai-cardshop-price-search
 
 ## 30-second start
 
-1. Give the agent the **product** (e.g. Cursor 无限续杯, Muse 账号) and any constraint (只要 Auto / 要质保 / 只要 16688).
-2. Agent runs **`scout`**: harvest ≥2 aggregators, map **delivery types** (A Auto池 / B 插件 / C 成品号 / …).
-3. You pick the type (or you already named it) → agent runs **`deep`** on that type only.
-4. You get a shop table + trial/month suggestions + source URLs. Re-check origin before paying (CAPTCHA/stock lag).
+1. Name any **product** (Cursor 无限续杯, Muse 账号, TRAE 换号, Consensus 学生Pro, …) and constraints.
+2. Agent runs **`scout`**: ≥2 aggregators (or expansion), maps **delivery types** A–J.
+3. You pick a type → **`deep`** on that type only.
+4. Agent **write-backs** new aliases/channels into `reference.md` / `examples.md` when the hunt teaches something new.
+5. Re-check origin / 闲鱼 App before paying.
 
 ## What it does
 
-- Treats vague marketing words ("无限续杯") as **multi-type**, not one SKU.
-- Indexes **aggregators first**, then jumps to origin shop tokens.
-- Forces a **taxonomy map** before recommendations.
-- Separates Auto换号池 vs 插件 vs 质保成品号 vs 白号/接码 so prices are comparable.
-- Degrades honestly on CAPTCHA / empty channels (no fake shops).
-- **Expansion when indexes miss:** Taobao / 闲鱼 / 合租 / official student Claim / VCC+EDU materials.
-- Always reports **lowest in-stock price within the confirmed type** plus official anchor.
+- Product-agnostic A–J taxonomy (换号池 / 插件 / 成品号 / 学生Claim / …).
+- Aggregators first; expand to 淘宝 / 闲鱼 / 合租 / official / materials when empty.
+- Coded-title fan-out when `无限续杯` is banned.
+- **Living Product playbook** — each new brand’s channel routing and slang stay in the skill.
+- Lowest **in-stock** price within the confirmed type + official anchor.
+- Honest degradation (no fake shops).
 
 ## When to use
 
-- Buying or comparing Muse / Cursor / ChatGPT / Claude / … on 卡网
-- Trigger phrases: 比价, 找店, 续杯, 无限续杯, 卡网, 链动, 16688, aifka, pricememo, openprice, airadar
+Any AI digital good on 卡网 / 淘宝 / 闲鱼 / 合租.  
+Triggers: 比价, 找店, 续杯, 无限续杯, 卡网, 链动, 16688, 闲鱼, 淘宝, 暗号, 学生优惠, aifka, …
 
 ## Requirements
 
-- Network access to aggregators (and optionally origin shops)
-- Optional: `cursor-ide-browser` MCP if SPA/CAPTCHA needs a real browser
-- No package manager required for the skill files themselves
+- Network to aggregators / marketplaces
+- Optional: `cursor-ide-browser` for SPA/CAPTCHA
+- No package install required for the skill files
 
 ## Installation
 
-### Cursor personal skill
+### Portable (Downloads / clone)
 
-Copy this folder to:
+```text
+git clone https://github.com/911218sky/ai-cardshop-price-search.git
+```
+
+Point the agent at this folder’s `SKILL.md`, or copy into Cursor skills:
 
 ```text
 ~/.cursor/skills/ai-cardshop-price-search/
@@ -46,30 +51,27 @@ Copy this folder to:
 
 ```text
 ai-cardshop-price-search/
-├── SKILL.md
-├── reference.md
-├── examples.md
+├── SKILL.md       # workflow + write-back rules
+├── reference.md   # URL recipes + Product playbook
+├── examples.md    # worked cases (structure only)
 ├── README.md
 ├── CHANGELOG.md
 └── LICENSE
 ```
 
-Then ask the agent to find shops/prices for a product (e.g. Cursor Auto续杯, Muse 成品号).
-
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `SKILL.md` | Main workflow: scout → taxonomy → confirm → deep → recommend |
-| `reference.md` | URL recipes, aifka JSON parse, failure table |
-| `examples.md` | Cursor 无限续杯 → type A case study |
-| `README.md` | This file |
-| `CHANGELOG.md` | Version history |
+| `SKILL.md` | Scout → taxonomy → deep → recommend → write-back |
+| `reference.md` | Recipes + **Product playbook** (extend per brand) |
+| `examples.md` | Cursor / Consensus / TRAE cases |
+| `CHANGELOG.md` | Versions |
 | `LICENSE` | AGPL-3.0-or-later |
 
-## Scope
+## After each new product hunt
 
-General-purpose cardshop hunt. The Cursor refill case in `examples.md` is a worked example, not a mandatory product protocol.
+Agents should update the Product playbook (and optionally `examples.md`) so the next session starts smarter. See **Knowledge write-back** in `SKILL.md`.
 
 ## Related
 

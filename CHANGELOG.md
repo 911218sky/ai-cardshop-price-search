@@ -1,20 +1,25 @@
 # Changelog
 
+## 1.3.0 - 2026-10-26
+
+- **Generic skill:** product-agnostic core; examples are optional case studies, not the only brands.
+- **Knowledge write-back:** after meaningful hunts, update Product playbook / examples / CHANGELOG (required).
+- **Product playbook** in `reference.md`: living catalog (Cursor, Muse, TRAE, Consensus, …) with channels, 暗号, noise, types.
+- Modes: add `write-back`; checklist step 9; output template Write-back section.
+- README: portable install + write-back expectation; version 1.3.0.
+
+## 1.2.0 - 2026-10-26
+
+- **Coded-title / synonym fan-out** for Taobao/闲鱼 title bans.
+- **闲鱼 first-class** for Type A when 卡网 empty.
+- **examples.md:** TRAE Type A case (aifka 0 → 淘宝/闲鱼暗号).
+- reference: marketplace coded recipes + failure rows.
+
 ## 1.1.0 - 2026-10-26
 
-- **Expansion protocol:** if aifka/PriceMemo/OpenPrice/airadar miss, continue through Taobao/闲鱼/合租/official/materials before declaring not found.
-- **Lowest-price rule:** report floor within confirmed type + official anchor; flag junk shared floors.
-- Taxonomy **H/I/J** for student discount / materials / student-channel finished accounts.
-- Index rows: consumer marketplaces, 合租 shops, official Claim, `aifka ?kind=payment`.
-- **examples.md:** Consensus 学生 Pro worked case (indexes empty → expand → typed floors).
-- **reference.md:** expansion URL recipes + student checklist.
-- Version bump to 1.1.0.
+- Expansion protocol when aggregators miss; lowest-price-in-type + official anchor.
+- Taxonomy H/I/J; Consensus 学生 Pro example.
 
 ## 1.0.0 - 2026-10-26
 
-- Initial release: broad-then-narrow AI cardshop price hunt skill.
-- Aggregator index table: aifka, PriceMemo, OpenPrice, airadar + ldxp/16688 origin patterns.
-- Delivery-type taxonomy A–G; scout / deep / lite modes; degradation path.
-- reference.md: URL recipes, aifka bootstrap parse, failure table.
-- examples.md: Cursor 无限续杯 → type A worked case (2026-10-26).
-- GNU Affero General Public License v3.0 or later.
+- Initial broad-then-narrow cardshop skill; Cursor Type A example; AGPL-3.0-or-later.

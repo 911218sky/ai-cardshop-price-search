@@ -1,26 +1,37 @@
 ---
 name: ai-cardshop-price-search
 description: >
-  Broad-then-narrow price hunt for AI subscriptions, accounts, refills, and
-  tools on Chinese card-shop aggregators (aifka, PriceMemo, OpenPrice, airadar)
-  and origin shops (16688, ldxp/wzyp). Maps delivery types first (Auto huanhao,
-  plugin, finished account, white account, SMS), clarifies which type the user
-  wants, then deep-dives shops and prices. Use when the user wants to buy or
-  compare Muse, Cursor, ChatGPT, Claude, Gemini, Grok, Windsurf, Devin, refill,
-  unlimited refill, plugin, finished account, top-up, CDK, white account, SMS,
-  or asks which shops sell something on 16688 / ldxp / card shops. Trigger
-  phrases: price compare, find shop, refill, unlimited refill, card shop, ldxp,
-  16688, aifka, pricememo, openprice, airadar, cheapest shop,
-  比价, 找店, 续杯, 无限续杯, 卡网, 链动, 便宜哪家.
+  Broad-then-narrow price hunt for any AI subscription, account, refill, or
+  digital good on Chinese card-shop aggregators (aifka, PriceMemo, OpenPrice,
+  airadar), origin shops (16688, ldxp/wzyp), and consumer markets (Taobao,
+  闲鱼/goofish, 合租). Maps delivery types first (Auto pool, plugin, finished
+  account, white account, SMS, student Claim, materials), clarifies which type
+  the user wants, deep-dives shops and prices, then write-backs new product
+  aliases / codewords / channel notes into this skill. Use for Muse, Cursor,
+  ChatGPT, Claude, Gemini, Grok, Windsurf, Devin, TRAE/trea, Consensus, or any
+  new brand; refill, unlimited refill, plugin, finished account, top-up, CDK,
+  white account, SMS, student discount. Trigger phrases: price compare, find
+  shop, refill, unlimited refill, card shop, ldxp, 16688, aifka, pricememo,
+  openprice, airadar, cheapest shop, xianyu, goofish, 比价, 找店, 续杯,
+  无限续杯, 卡网, 链动, 闲鱼, 淘宝, 暗号, 便宜哪家, 学生优惠.
 license: AGPL-3.0-or-later
 metadata:
-  short-description: Broad-then-narrow AI cardshop price hunt via aggregators
-  version: 1.1.0
+  short-description: Generic broad-then-narrow AI cardshop hunt + skill write-back
+  version: 1.3.0
 ---
 
 # AI Cardshop Price Search
 
-Find AI membership / account / refill offers by **indexing aggregators first**, mapping **delivery types broadly**, then **locking the type the user wants** and deep-diving shops + prices. Never treat "无限续杯" / unlimited refill as one SKU.
+**Generic** workflow for any AI digital good: index aggregators → map **delivery types** → lock the type the user wants → deep-dive shops/prices → **write durable learnings back into this skill**.
+
+Never treat marketing phrases ("无限续杯", "学生Pro", "官方") as one SKU. Product names in [examples.md](examples.md) are **worked cases**, not the only supported brands.
+
+## Design principles (generic)
+
+1. **Product-agnostic core** — same A–J taxonomy and expansion order for every brand.
+2. **Living product memory** — new brands, slang, and "where supply actually lives" go into [reference.md](reference.md) product playbook + optional new example.
+3. **Channels are not equal** — some goods are 卡网-native (Cursor Auto); some are 淘宝/闲鱼-only (TRAE Type A); some need official Claim (Consensus student). Discover, then record.
+4. **Prices expire; patterns don't** — re-fetch prices every hunt; keep codewords / channel routing / type maps.
 
 ## Index first (agents: open these before guessing shops)
 
@@ -29,158 +40,208 @@ Find AI membership / account / refill offers by **indexing aggregators first**, 
 | Multi-brand discovery + shop outbound | https://www.aifka.com | Title search (`q=`), brand filter, shop pages with `wzyp.cn` outbound |
 | Shop / SKU memory | https://ai.pricememo.cn | Stable shop IDs, stock notes, origin links |
 | Card-net SKU dump | https://www.openprice.cc/card-products/{slug} | Low-level SKUs: white accounts, plugins, SMS, day cards |
-| Official-ish / 16688 channel map | https://airadar.vip | Good for finished official-tier accounts; weak for refill/plugin |
-| Consumer marketplaces | Taobao / Tmall / 闲鱼 | Long-tail brands missing from aifka (e.g. Consensus) |
+| Official-ish / 16688 channel map | https://airadar.vip | Finished official-tier; weak for refill/plugin |
+| Consumer marketplaces | Taobao / Tmall / 闲鱼 (goofish) | Long-tail + Type A when 卡网 empty; titles often **coded** |
 | 合租 / account shops | PremLogin-class, AccountBoy-class | Shared vs private; normalize per month |
-| Official student claim | Brand `/pricing` + help center | Verify current % and list price |
+| Official claim / pricing | Brand `/pricing` + help center | List price, student %, region limits |
 | Payments materials | https://www.aifka.com/?kind=payment | VCC / visa for Stripe bind |
 
 **Origin shops (after aggregator points you there):**
 
 | Platform | Origin pattern | Notes |
 |----------|----------------|-------|
-| ldxp (链动) | `https://wzyp.cn/shop/{TOKEN}` | SPA; often CAPTCHA — prefer aggregator scrape, user verifies origin |
-| 16688 | `https://www.16688.com.cn/shop/{TOKEN}` · `/goods/{id}` | SPA; public search weak — use airadar/aifka as index |
+| ldxp (链动) | `https://wzyp.cn/shop/{TOKEN}` | SPA; CAPTCHA common — aggregator first, user verifies |
+| 16688 | `https://www.16688.com.cn/shop/{TOKEN}` · `/goods/{id}` | Public search weak — use airadar/aifka as index |
 | Other ldxp systems | via aifka shop card `website_type` | Follow outbound on shop page |
 
-**Do not** start on 16688 homepage search alone. **Do not** assume airadar `cursor-pro` lists refill SKUs.
+**Do not** start on 16688 homepage search alone. **Do not** assume airadar `{brand}-pro` lists refill SKUs.
+
+Before harvesting a known brand, skim **Product playbook** in [reference.md](reference.md) for channel hints and aliases.
 
 ## When to use
 
-- User wants to buy / compare AI tools or accounts on card shops
-- User says: 续杯, 无限续杯, Auto换号, 插件, 成品号, 代充, 白号, 接码, Muse, Cursor, ...
-- User asks: which shop is cheap, who has stock, does 16688 have it, ldxp sellers
-
+- Buy / compare **any** AI tool, membership, account, or materials on 卡网 / 淘宝 / 闲鱼 / 合租
+- User says: 续杯, 无限续杯, Auto换号, 插件, 成品号, 代充, 白号, 接码, 学生优惠, 暗号, …
+- User asks: which shop is cheap, who has stock, 16688/ldxp/淘宝/闲鱼 where?
 
 ## When primary indexes miss (required expansion)
 
-If aifka / PriceMemo / OpenPrice / airadar return **0 relevant hits**, do **not** stop. Expand in order until you find the product **or** exhaust the list and say so honestly:
+If aifka / PriceMemo / OpenPrice / airadar return **0 relevant hits**, do **not** stop:
 
-1. **WebSearch** brand + 学生 / student / EDU / 代充 / 成品号 / 合租 / 淘宝 / 闲鱼
-2. **Taobao / Tmall** search (browser); record SKU tiers (共享 vs 独享 vs 代充) — list prices often show the cheapest SKU only
-3. **Xianyu / 闲鱼** if Taobao is thin
-4. **合租 / account marketplaces** (e.g. PremLogin, AccountBoy-class sites)
-5. **Official path**: brand pricing + student/faculty discount help docs
-6. **Materials path** (only if user wants own-account official): EDU mail shops + VCC (`aifka ?kind=payment`) + bind-card services
-7. Community threads for **clues only** — prices still need a live shop/official page
+1. **WebSearch** brand + intent + 淘宝 / 闲鱼 / goofish / 合租 / 学生 / EDU / 代充 + **coded synonyms**
+2. **Taobao / Tmall** (browser); note 共享 vs 独享 vs 代充 — list price often ≠ real SKU
+3. **闲鱼 (goofish)** — **required** for Type A / banned titles; parallel to Taobao, not optional
+4. **合租 / account marketplaces** (PremLogin, AccountBoy-class, …)
+5. **Official path**: `/pricing` + student/faculty help docs
+6. **Materials path** (own-account official): EDU mail + VCC + bind services
+7. Community (linux.do, V2EX, brand forum) for **slang/clues only** — prices need live listings
 
-**Stop rule:** After steps 1–6 with still nothing buyable → report not found on card-net; give cheapest verified official/materials path — never invent a shop.
+**Stop rule:** Steps 1–6 exhausted with nothing buyable → say not found; give cheapest verified official/materials path — never invent shops.
+
+## Coded titles / synonym fan-out (Taobao · 闲鱼)
+
+Platforms ban or bury literal `无限续杯` / brand+续杯. **Fan out** — one failed keyword ≠ no supply.
+
+1. Literal brand + intent first.
+2. If thin / 0 / wrong category (shoes, etc.) / 违规下架 → use codeword tables in [reference.md](reference.md).
+3. Search **each** synonym on Taobao **and** 闲鱼; WebSearch `"闲鱼" + synonym`.
+4. Re-classify every hit into A–J before pricing.
+5. Prefer 付款量/评价 over cryptic lowest price.
+6. In Sources: list **which codewords hit** (for write-back).
+
+### Cross-brand soft titles (mix with `{brand}`)
+
+| Plain intent | Try |
+|--------------|-----|
+| Type A / 续杯 | 续杯, 无感换号, 自动换号, 切号, 号池, 积分卡, 卡密, 天卡/周卡/月卡, 按时间付费 |
+| Soften bans | 会议系统, 助手, 工具, 稳定token, 量大管饱, 独享账号, 独立账号, 双系统 |
+| Context | 保留上下文, 不掉记录, 切号保留, solo无感 |
+| Plugin (often B) | 插件, vsix, 激活器, 无感插件 |
+
+Brand-specific seeds live in the **Product playbook** — extend there, not only in chat.
+
+## Knowledge write-back (required after meaningful hunts)
+
+This skill is a **shared memory**. After a hunt that teaches something new (new brand, new channel, new 暗号, empty-卡网 routing), **update the skill files in this folder** before ending — do not leave learnings only in chat.
+
+### When to write back
+
+| Trigger | Update |
+|---------|--------|
+| New brand / product family | Add row to Product playbook in [reference.md](reference.md) |
+| New seller slang / 暗号 that worked | Add to that brand's aliases + generic coded table if reusable |
+| Channel routing surprise (e.g. "only 闲鱼, aifka=0") | Playbook `Primary channels` + failure table if general |
+| New delivery subtype for this brand | Note under playbook; keep A–J IDs stable |
+| Full worked hunt worth reusing | Append short case to [examples.md](examples.md) (structure, not stale prices as gospel) |
+| User asks to refresh skill / upload | Write-back + bump [CHANGELOG.md](CHANGELOG.md) version |
+
+### Write-back checklist
+
+```
+Write-back:
+- [ ] reference.md Product playbook row (aliases, channels, type notes, noise filters)
+- [ ] New reusable codewords → generic coded table if cross-brand
+- [ ] examples.md case if pattern is non-obvious (optional but preferred)
+- [ ] CHANGELOG.md entry + version bump in SKILL.md + README.md metadata
+- [ ] Do NOT paste ephemeral day prices as forever facts — label "observed YYYY-MM-DD, re-fetch"
+```
+
+### What not to hardcode forever
+
+- Exact ¥/$ floors (re-fetch every run)
+- Shop stock counts
+- Official promo % without "verify live"
+
+### What to keep forever
+
+- Which channel class carries the SKU (卡网 vs 淘宝/闲鱼 vs official Claim)
+- Alias / typo / 暗号 lists
+- Brand-specific noise (e.g. TRAE YOUNG sneakers)
+- Type A vs B vs C pitfalls for that brand
+
+If the skill lives only under Downloads (not `~/.cursor/skills`), still edit **this repo folder**; tell the user where files changed.
 
 ## Lowest price (within confirmed type)
 
-After type lock:
+1. All **in-stock** SKUs of that type across expanded platforms.
+2. Normalize unit when possible (per day / month / year); keep currency.
+3. Floor + 1–2 backups.
+4. Official list (and student % if any) as anchor.
+5. Flag suspicious floors vs official (likely 共享/junk).
 
-1. Collect all **in-stock** SKUs of that type across expanded platforms.
-2. Normalize to a common unit when possible (per month / per year); keep original currency.
-3. Report **floor price** + next 1–2 backups.
-4. Put **official list price** (and official student % if any) as an anchor row.
-5. Flag suspicious floors (e.g. ¥3–5 "年卡" vs official ~$100+/yr) as likely 共享/junk unless proven 独享.
 ## Non-negotiables
 
-1. **Broad → classify → confirm → deep** — never jump to one shop from a vague "续杯".
-2. **Never price-compare across delivery types** (Auto pool ≠ plugin ≠ warranty finished account).
-3. **Aggregators index; origin shops sell** — quote aggregator price + link; warn stock/price may lag.
-4. **Honest risk scope** — third-party refill/tools are unofficial; note Admin/inject/account-pool risks briefly.
-5. **If CAPTCHA blocks origin** — use aifka/PriceMemo numbers; tell user to re-check origin before pay.
-6. **Domain examples are optional** — Cursor refill case in [examples.md](examples.md) is a worked study.
-7. **Degrade honestly** if aggregators fail — no invented shops or prices.
-8. **Keep expanding platforms** until the SKU is found or the expansion list is exhausted.
-9. **Always state the lowest in-stock price for the confirmed type**, plus official anchor.
+1. **Broad → classify → confirm → deep** — never one shop from vague "续杯".
+2. **Never price-compare across delivery types.**
+3. **Aggregators index; origin/marketplaces sell** — warn lag/CAPTCHA.
+4. **Honest risk** — third-party refill/tools unofficial; brief pool/plugin risks.
+5. **CAPTCHA on origin** — aggregator numbers + user re-check.
+6. **Examples are optional domain studies** — replace product freely.
+7. **Degrade honestly** — no invented shops/prices.
+8. **Expand until found or list exhausted.**
+9. **State lowest in-stock for confirmed type** + official anchor.
+10. **Taobao/闲鱼 synonym fan-out** — one banned keyword ≠ empty market.
+11. **闲鱼 first-class** when 卡网 miss or titles soft.
+12. **Write back** durable product/channel/slang learnings into this skill.
 
 ## Modes
 
-- **`scout`** (default when target type unclear): map taxonomy + 2-4 candidate types + ask user which type.
-- **`deep`** (type confirmed, or user already named it): multi-aggregator hunt for that type only.
-- **`lite`**: one aggregator + top 3 links for a quick peek.
+- **`scout`** — taxonomy map + ask type (default when unclear).
+- **`deep`** — confirmed type only; multi-source.
+- **`lite`** — one aggregator + top 3 links.
+- **`write-back`** — after hunt (or alone): update playbook/examples/CHANGELOG.
 
-If unclear, run **`scout`** first, then **`deep`**.
+Unclear → `scout` then `deep`; end with `write-back` when something new was learned.
 
 ## Workflow checklist
 
-Copy and track:
-
 ```
 Progress:
-- [ ] 1. Scope: product family, user phrase, budget/horizon, mode (scout|deep|lite)
-- [ ] 2. Broad harvest: >=2 aggregators; if 0 hits → expand platforms (Taobao/合租/official/materials)
-- [ ] 3. Taxonomy map: cluster hits into delivery types
-- [ ] 4. Confirm target type with user UNLESS already named clearly
-- [ ] 5. Deep pass: only that type — shops, SKUs, price, stock, outbound URLs
-- [ ] 6. Cross-check: second aggregator or shop page; flag OOS / stale
-- [ ] 7. Recommend: lowest in-stock of confirmed type + official anchor; exclude wrong types
-- [ ] 8. Cite sources: aggregator URL / shop token / when observed
+- [ ] 1. Scope: product family, user phrase, budget/horizon, mode
+- [ ] 1b. Skim reference.md Product playbook for this brand (if row exists)
+- [ ] 2. Broad harvest: >=2 aggregators; if 0 → expand (淘宝+闲鱼+合租/official/materials)
+- [ ] 2b. Synonym fan-out on 淘宝/闲鱼 when literal thin/banned
+- [ ] 3. Taxonomy map A–J
+- [ ] 4. Confirm type (unless user already named it)
+- [ ] 5. Deep: shops, SKUs, price, stock, links (incl. 闲鱼)
+- [ ] 6. Cross-check; flag OOS/stale
+- [ ] 7. Recommend: floor in-type + official anchor; exclude wrong types
+- [ ] 8. Cite sources + codewords that hit + observed time
+- [ ] 9. Write-back: playbook / examples / CHANGELOG if new learnings
 ```
 
 ## Step 1 — Scope
 
-Ask (or infer) only what is missing:
-
 | Field | Example |
 |-------|---------|
-| Brand / product | Cursor, Muse, ChatGPT Plus |
-| User words | "无限续杯" / "只要 Auto" / "要质保 Pro" |
-| Horizon | try 1 day / need one month |
-| Channel preference | 16688 only / ldxp OK / any |
+| Brand / product | any AI digital good (Cursor, Muse, TRAE, Consensus, …) |
+| User words | "无限续杯" / "只要 Auto" / "学生Pro" / "质保成品" |
+| Horizon | try 1 day / one month |
+| Channel preference | 16688 only / ldxp OK / 淘宝闲鱼 OK / any |
 
-Do **not** wait for perfect scope before scout harvest — gather types first, then confirm.
+Infer missing fields; do not block scout on perfect scope.
 
-## Step 2 — Broad harvest (always multi-source)
+## Step 2 — Broad harvest
 
-1. **aifka:** `https://www.aifka.com/?brand={brand}&q={keyword}`
-   - Parse `page-bootstrap` JSON (`products[]`: title, price, shop_name, stock_count, shop_id).
-   - Shop outbound: `https://www.aifka.com/shops/{shop_id}` → `/go?url=` → `wzyp.cn/shop/...`
-2. **PriceMemo:** `https://ai.pricememo.cn/products/{slug}` or `/shops/{TOKEN}`
-3. **OpenPrice:** `https://www.openprice.cc/card-products/{slug}`
-4. **airadar:** `https://airadar.vip/prices/{slug}` and `?channel=16688` — mainly official-tier; if empty for refill, say so and move on
+1. **aifka** `?brand={brand}&q={keyword}` — parse `page-bootstrap` `products[]`
+2. **PriceMemo** `/products/{slug}` or `/shops/{TOKEN}`
+3. **OpenPrice** `/card-products/{slug}`
+4. **airadar** `/prices/{slug}` — official-tier; empty for refill → say so and move on
 
-Keyword seeds (mix):
-
-| Intent hint | Try q= |
-|-------------|--------|
-| refill / 续杯 | 续杯, auto, 换号, 插件 |
-| official membership | 成品号, 质保, 官方, 直充 |
-| materials | 白号, 接码 |
-
-WebSearch may discover shop names; **prices must come from aggregator or origin**.
+Then expansion + synonym fan-out as needed. Prices from aggregator, origin, or live marketplace only.
 
 ## Step 3 — Taxonomy map (required)
 
 | Type | Title keywords | Usually means |
 |------|----------------|---------------|
-| A | Auto续杯, 无感换号, N个号, 积分卡 | Free/trial account pool + switcher; often Auto/Composer only |
-| B | 不换号, 插件计费, 插件 | Client plugin / inject quota |
-| C | 成品号, 质保订阅, 官方会员, 直充 | Real paid sub / ready account |
-| D | 额度卡, 周期卡, 独享N额度 | Quota/time card — verify; do not assume = A or C |
-| E | 白号, Free Auto 白号 | Raw accounts (DIY), not a refill service |
-| F | 接码, 实卡 | SMS / phone for registration |
-| G | Other / unclear | Do not recommend until classified |
-| H | 学生优惠, student discount, Claim, SheerID, 教育优惠 | Official student/faculty % off on *your* account |
-| I | 学生认证, 绑卡, EDU邮箱, 虚拟卡, VCC, 3DS | Materials to complete H (mail/card/bind) — cost stack |
-| J | 学生成品号, 学生渠道成品 | Finished account claiming student channel — verify |
+| A | Auto续杯, 无感换号, N个号, 积分卡, 会议系统+换号, 按时间付费 | Account pool + switcher |
+| B | 不换号, 插件计费, vsix, 激活器 | Client plugin / inject |
+| C | 成品号, 质保订阅, 官方会员, 直充 | Paid sub / ready account |
+| D | 额度卡, 周期卡, 独享N额度 | Quota/time — verify ≠ A/C |
+| E | 白号 | Raw DIY accounts |
+| F | 接码, 实卡 | SMS / phone |
+| G | Unclear | Do not recommend until classified |
+| H | 学生优惠, Claim, SheerID, 教育优惠 | Official % off on *your* account |
+| I | EDU邮箱, VCC, 3DS, 绑卡 | Materials for H |
+| J | 学生成品号 | Finished account via student channel |
 
-In **scout**, show the map with sample SKUs + price bands, then ask which type. Then Step 4.
+Scout: show map + bands → ask type → Step 4.
 
-## Step 4 — Deep dive (single type)
+## Step 4 — Deep (single type)
 
-1. Re-query with type-specific keywords.
-2. Shop table: name | platform | SKU | price | stock | origin | index page | notes
-3. Prefer in-stock over cheapest OOS.
-4. Separate trial (day/week) vs month.
-5. List tool URLs from shop notices under notes — do not install tools unless asked.
+Shop table: name | platform | SKU | price | stock | origin/index | notes. Prefer in-stock. Split day/week vs month. Tool URLs under notes only.
 
 ## Step 5 — Recommend
 
-1. Trial: cheapest in-stock day/week of confirmed type
-2. Regular: cheapest in-stock month of that type
-3. Backup: next shop or OOS watch
-4. One line: which types were excluded
+Trial floor → regular floor → backup → excluded types one-liner.
+
+## Step 6 — Write-back
+
+Apply [Knowledge write-back](#knowledge-write-back-required-after-meaningful-hunts). Tell user what files changed.
 
 ## Degradation path
 
-1. State what failed.
-2. Give exact URLs for the user to open.
-3. Label partial data `aggregator-only` / `user-verify-origin`.
-4. Forbidden: fake shop tokens, fake stock, made-up prices.
+1. State failure. 2. Exact URLs. 3. Label `aggregator-only` / `user-verify-origin` / `xianyu-app-verify`. 4. No fake tokens/stock/prices.
 
 ## Output template
 
@@ -194,7 +255,7 @@ In **scout**, show the map with sample SKUs + price bands, then ask which type. 
 | Type | Sample titles | Price band | In-stock shops |
 
 ## Shops after lock (deep)
-| Shop | SKU | Price | Stock | Links |
+| Shop | Platform | SKU | Price | Stock | Links |
 
 ## Suggest
 1. Trial: ...
@@ -202,10 +263,13 @@ In **scout**, show the map with sample SKUs + price bands, then ask which type. 
 3. Excluded: ...
 
 ## Sources
-- aifka / PriceMemo / OpenPrice / airadar + observed time
+- indexes + marketplaces + codewords that hit + observed time
+
+## Write-back
+- [ ] playbook / examples / changelog updated (or: nothing new)
 ```
 
 ## Additional resources
 
-- Query recipes + aifka JSON tips: [reference.md](reference.md)
-- Worked cases (Cursor refill A; Consensus student Pro): [examples.md](examples.md)
+- URL recipes, Product playbook, coded titles: [reference.md](reference.md)
+- Worked cases (Cursor A, Consensus H, TRAE A): [examples.md](examples.md)
