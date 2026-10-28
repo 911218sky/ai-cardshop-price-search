@@ -3,21 +3,21 @@ name: ai-cardshop-price-search
 description: >
   Broad-then-narrow price hunt for any AI subscription, account, refill, or
   digital good on Chinese card-shop aggregators (aifka, PriceMemo, OpenPrice,
-  airadar), origin shops (16688, ldxp/wzyp), and consumer markets (Taobao,
-  闲鱼/goofish, 合租). Maps delivery types first (Auto pool, plugin, finished
-  account, white account, SMS, student Claim, materials), clarifies which type
-  the user wants, deep-dives shops and prices, then write-backs new product
-  aliases / codewords / channel notes into this skill. Use for Muse, Cursor,
-  ChatGPT, Claude, Gemini, Grok, Windsurf, Devin, TRAE/trea, Consensus, or any
-  new brand; refill, unlimited refill, plugin, finished account, top-up, CDK,
-  white account, SMS, student discount. Trigger phrases: price compare, find
+  airadar), origin shops (16688, ldxp/wzyp), personal 小铺 directories, and consumer
+  markets (Taobao, 闲鱼/goofish, 合租, X/Twitter discovery). Maps delivery types
+  first (Auto pool, plugin, finished account, white account, SMS, student Claim,
+  materials), clarifies which type the user wants, deep-dives shops and prices,
+  then write-backs new product aliases / codewords / channel notes into this
+  skill. reference.md also lists upstream GitHub projects and site recipes for
+  agents. Use for Muse, Cursor, ChatGPT, Claude, Gemini, Grok, Windsurf, Devin,
+  TRAE/trea, Consensus, or any new brand. Trigger phrases: price compare, find
   shop, refill, unlimited refill, card shop, ldxp, 16688, aifka, pricememo,
-  openprice, airadar, cheapest shop, xianyu, goofish, 比价, 找店, 续杯,
+  openprice, airadar, cheapest shop, xianyu, goofish, 小铺, 比价, 找店, 续杯,
   无限续杯, 卡网, 链动, 闲鱼, 淘宝, 暗号, 便宜哪家, 学生优惠.
 license: AGPL-3.0-or-later
 metadata:
   short-description: Generic broad-then-narrow AI cardshop hunt + skill write-back
-  version: 1.3.0
+  version: 1.4.1
 ---
 
 # AI Cardshop Price Search
@@ -39,9 +39,12 @@ Never treat marketing phrases ("无限续杯", "学生Pro", "官方") as one SKU
 |------|-----|----------|
 | Multi-brand discovery + shop outbound | https://www.aifka.com | Title search (`q=`), brand filter, shop pages with `wzyp.cn` outbound |
 | Shop / SKU memory | https://ai.pricememo.cn | Stable shop IDs, stock notes, origin links |
+| Shop directory (个人小铺) | https://ai.pricememo.cn/shops | 链动 + **16688** personal shops; start here for “小铺” |
 | Card-net SKU dump | https://www.openprice.cc/card-products/{slug} | Low-level SKUs: white accounts, plugins, SMS, day cards |
 | Official-ish / 16688 channel map | https://airadar.vip | Finished official-tier; weak for refill/plugin |
+| Public market snapshot | https://ai.nosec.uk | Extra price/stock observation; risk-oriented |
 | Consumer marketplaces | Taobao / Tmall / 闲鱼 (goofish) | Long-tail + Type A when 卡网 empty; titles often **coded** |
+| Social discovery | X (Twitter) + Google `site:` | Finds new personal shops / sellers → then open origin |
 | 合租 / account shops | PremLogin-class, AccountBoy-class | Shared vs private; normalize per month |
 | Official claim / pricing | Brand `/pricing` + help center | List price, student %, region limits |
 | Payments materials | https://www.aifka.com/?kind=payment | VCC / visa for Stripe bind |
@@ -51,12 +54,14 @@ Never treat marketing phrases ("无限续杯", "学生Pro", "官方") as one SKU
 | Platform | Origin pattern | Notes |
 |----------|----------------|-------|
 | ldxp (链动) | `https://wzyp.cn/shop/{TOKEN}` | SPA; CAPTCHA common — aggregator first, user verifies |
-| 16688 | `https://www.16688.com.cn/shop/{TOKEN}` · `/goods/{id}` | Public search weak — use airadar/aifka as index |
+| 16688 | `https://www.16688.com.cn/shop/S{digits}` · `/shop/{alias}` · `/goods/{id}` | Homepage search weak — PriceMemo `/shops` + airadar as index |
 | Other ldxp systems | via aifka shop card `website_type` | Follow outbound on shop page |
 
-**Do not** start on 16688 homepage search alone. **Do not** assume airadar `{brand}-pro` lists refill SKUs.
+**Do not** start on 16688 homepage search alone. **Do not** assume airadar `{brand}-pro` lists refill SKUs.  
+**Do not** treat GitHub “Cursor 续杯工具” crack repos as shop indexes.  
+**Do not** equate「个人小铺」with Type A — 16688 超市 often sells C/F while Auto续杯 lives on ldxp + independent 自助店.
 
-Before harvesting a known brand, skim **Product playbook** in [reference.md](reference.md) for channel hints and aliases.
+Before harvesting a known brand, skim **Product playbook**, **Upstream projects & sites**, **Discovery channels**, **Seed shop catalog**, and **Cursor hunt notes** in [reference.md](reference.md).
 
 ## When to use
 
@@ -68,15 +73,19 @@ Before harvesting a known brand, skim **Product playbook** in [reference.md](ref
 
 If aifka / PriceMemo / OpenPrice / airadar return **0 relevant hits**, do **not** stop:
 
-1. **WebSearch** brand + intent + 淘宝 / 闲鱼 / goofish / 合租 / 学生 / EDU / 代充 + **coded synonyms**
-2. **Taobao / Tmall** (browser); note 共享 vs 独享 vs 代充 — list price often ≠ real SKU
-3. **闲鱼 (goofish)** — **required** for Type A / banned titles; parallel to Taobao, not optional
-4. **合租 / account marketplaces** (PremLogin, AccountBoy-class, …)
-5. **Official path**: `/pricing` + student/faculty help docs
-6. **Materials path** (own-account official): EDU mail + VCC + bind services
-7. Community (linux.do, V2EX, brand forum) for **slang/clues only** — prices need live listings
+1. **WebSearch** brand + intent + 淘宝 / 闲鱼 / goofish / 合租 / 学生 / EDU / 代充 + **coded synonyms** + `16688` / 小铺
+2. **PriceMemo `/shops`** + Google `site:16688.com.cn/shop` for **个人小铺**
+3. **Taobao / Tmall** (browser); note 共享 vs 独享 vs 代充 — list price often ≠ real SKU
+4. **闲鱼 (goofish)** — **required** for Type A / banned titles; parallel to Taobao, not optional
+5. **X (Twitter)** advanced search (recipes in reference) — seller discovery only; still need origin URL
+6. **合租 / account marketplaces** (PremLogin, AccountBoy-class, …)
+7. **Official path**: `/pricing` + student/faculty help docs
+8. **Materials path** (own-account official): EDU mail + VCC + bind services
+9. Community (linux.do, V2EX, brand forum) for **slang/clues only** — prices need live listings
 
-**Stop rule:** Steps 1–6 exhausted with nothing buyable → say not found; give cheapest verified official/materials path — never invent shops.
+**Stop rule:** Steps 1–8 exhausted with nothing buyable → say not found; give cheapest verified official/materials path — never invent shops.
+
+**Optional tooling (study, don't require install):** 闲鱼 monitors / price-radar repos listed under Upstream projects in [reference.md](reference.md) — useful when building automation; for a one-off hunt, WebFetch aggregators + browser is enough.
 
 ## Coded titles / synonym fan-out (Taobao · 闲鱼)
 
@@ -179,8 +188,9 @@ Unclear → `scout` then `deep`; end with `write-back` when something new was le
 Progress:
 - [ ] 1. Scope: product family, user phrase, budget/horizon, mode
 - [ ] 1b. Skim reference.md Product playbook for this brand (if row exists)
-- [ ] 2. Broad harvest: >=2 aggregators; if 0 → expand (淘宝+闲鱼+合租/official/materials)
+- [ ] 2. Broad harvest: >=2 aggregators; if 0 → expand (PriceMemo/shops + 淘宝+闲鱼+X +合租/official/materials)
 - [ ] 2b. Synonym fan-out on 淘宝/闲鱼 when literal thin/banned
+- [ ] 2c. If user wants 个人小铺: seed catalog + `/shops` + 16688 source ids in reference.md
 - [ ] 3. Taxonomy map A–J
 - [ ] 4. Confirm type (unless user already named it)
 - [ ] 5. Deep: shops, SKUs, price, stock, links (incl. 闲鱼)
@@ -231,6 +241,10 @@ Scout: show map + bands → ask type → Step 4.
 
 Shop table: name | platform | SKU | price | stock | origin/index | notes. Prefer in-stock. Split day/week vs month. Tool URLs under notes only.
 
+**False-friend filter (before the table):** drop D「独享额度/周期卡」misnamed 续杯, B「不换号/插件」, F「接码+换号」, and non-shop 续杯工具站.  
+**Switcher / 切号助手 shops:** if week/month say「测过不退」, recommend day-card trial before month.  
+**OOS cheapest:** list as watch; recommend next **in-stock** same type.
+
 ## Step 5 — Recommend
 
 Trial floor → regular floor → backup → excluded types one-liner.
@@ -271,5 +285,5 @@ Apply [Knowledge write-back](#knowledge-write-back-required-after-meaningful-hun
 
 ## Additional resources
 
-- URL recipes, Product playbook, coded titles: [reference.md](reference.md)
-- Worked cases (Cursor A, Consensus H, TRAE A): [examples.md](examples.md)
+- URL recipes, Product playbook, discovery (Google/X/小铺), upstream GitHub/sites, seed shops: [reference.md](reference.md)
+- Worked cases (Cursor A, Consensus H, TRAE A, discovery seeds): [examples.md](examples.md)

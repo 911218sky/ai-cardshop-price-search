@@ -8,6 +8,8 @@
 | 1 | Cursor 无限续杯 → A | 卡网-native Type A; airadar Pro ≠ 续杯 |
 | 2 | Consensus 学生 Pro | aifka 0 → official Claim + 合租; H vs Shared |
 | 3 | TRAE Type A | aifka 0 → 淘宝/闲鱼 + 暗号 (会议系统) |
+| 4 | Discovery seeds (Cursor + 个人小铺) | PriceMemo `/shops` + 16688-S* + Google/X recipes; upstream GitHub for connectors |
+| 5 | Cursor Auto 月卡 → A deep | 16688 个人店≠A; false friends B/D/F; TXUN/YOUGO/llz-OOS; day-card-first |
 
 ---
 
@@ -207,3 +209,108 @@ Tool pages (not shops): YOUGO https://cc.yougoaigc.com/ ; other shop notice http
 - Product playbook: TRAE — channels=淘宝+闲鱼; aifka often 0; aliases=trea/traex/会议系统/按时间付费  
 - Generic coded table: 会议系统, 按时间付费  
 - Noise: TRAE YOUNG sneakers
+
+---
+
+# Worked Example 4 — Discovery: personal shops + reference stack (2026-10-28)
+
+> **Meta case:** how to *find* shops/channels (and what open-source to study), not a single type lock.  
+> Copy when user asks「個人小舖怎麼找」「參考哪些專案／網站」.
+
+## Task
+
+**Goal:** Document discovery paths for AI 数字商品 (Cursor-class) including **个人小铺**, plus upstream repos/sites for agents.  
+**Mode:** scout (indexes) → seed catalog write-back.
+
+## Scout — where supply indexes live
+
+| Source | Query / page | Result |
+|--------|--------------|--------|
+| PriceMemo shops | https://ai.pricememo.cn/shops | Dozens of 链动 + **16688** personal shops (XAI, 派大星, 珠世AI, …) |
+| PriceMemo Cursor | https://ai.pricememo.cn/products/cursor-pro | Mixed A/C/D titles; shop tokens e.g. `WCT9GRNG`, `UELAUHQA` |
+| ldxp Cursor slice | https://ai.pricememo.cn/sources/ldxp/products/cursor-pro | 续杯会员店 D-cards; llz Auto A; 代充 C |
+| airadar | cursor-pro?channel=16688 | Better for C-class 成品; weak for A |
+| Google `site:x.com` | Cursor 续杯 | Sparse — X needs on-platform advanced search |
+| GitHub | ai_price_radar / price-radar / ai-goofish* | Connectors + 闲鱼 monitors (study, not buy) |
+
+## Delivery-type map (Cursor titles that day)
+
+| Type | Sample | Band (re-fetch) |
+|------|--------|-----------------|
+| A | Auto续杯 月卡 50/300号 | ~¥23 / ~¥100 |
+| C | 正规实付 Pro 月卡; 旧版20刀成品 (16688) | ~¥135–160 |
+| D | N天/月 独享额度 周期卡 (cursor续杯会员店) | ~¥9–76 |
+
+## Seed shops to open first (then classify)
+
+- https://ai.pricememo.cn/shops/WCT9GRNG — cursor续杯会员店 (mostly D)  
+- https://ai.pricememo.cn/shops/UELAUHQA — llz-cursor续杯 (A)  
+- 16688 examples via directory source ids: `16688-S209643`, `S343514`, `S265669`, … → origin `16688.com.cn/shop/S…`  
+- Independent clue: https://yidachuang.top/ (小文ai小铺) — per-SKU classify
+
+## Upstream for agents (implementation reference)
+
+- https://github.com/BeterXie/ai_price_radar — 16688 shop intake  
+- https://github.com/lincwang123-bot/price-radar — platform16688 + Cursor families  
+- https://github.com/84376834111/gpt-account-market-scanner — category scanner  
+- https://github.com/Usagi-org/ai-goofish-monitor — 闲鱼 monitor when 卡网 miss  
+
+Full tables: [reference.md](reference.md) → Upstream projects & sites / Discovery / Seed shop catalog.
+
+## Suggest (process, not a purchase pick)
+
+1. Start **PriceMemo `/shops` + brand product page**, not 16688 homepage.  
+2. Lock **A/B/C/D** before comparing ¥.  
+3. Use **Google/X recipes** only to discover sellers → always land on public shop URL.  
+4. Study **ai_price_radar / price-radar** if building connectors; use **ai-goofish*** for 闲鱼 automation.
+
+## Write-back done (this session)
+
+- reference.md: Upstream projects & sites; Discovery (Google/X/个人小铺); Seed shop catalog  
+- SKILL.md: index + expansion steps for `/shops`, X, 16688 personal  
+- examples.md: this case 4  
+- CHANGELOG: 1.4.0
+
+---
+
+# Worked Example 5 — Cursor Auto 续杯月卡 (Type A deep, 2026-10-28)
+
+> Lesson: **个人小铺 ≠ Auto号池**. Classify hard; 16688 超市 miss for A.
+
+## Task
+
+**Goal:** Auto 续杯月卡（多号换号）shops + buy recommend.  
+**Mode:** deep Type **A** only.
+
+## Scout traps
+
+| Query / place | What appeared | Action |
+|---------------|---------------|--------|
+| aifka `q=换号` | 不换号-插件 (小头/陆柒/…) | Exclude **B** |
+| PriceMemo `WCT9GRNG` cursor续杯会员店 | 独享额度周期卡 | Exclude **D** |
+| 16688 XAI/派大星/… goods | Cursor Ultra/Pro 成品 + 接码「换号」 | Exclude **C/F** — not A |
+| llz `UELAUHQA` | True A 50号 ¥22.90 | **OOS** → watch only |
+
+## Deep — in-stock Type A (re-fetch)
+
+| Shop | SKU | Price | Stock | Link |
+|------|-----|-------|-------|------|
+| TXUN | 切号助手月卡 | ¥30 | in | https://shop.txun.cc/ |
+| YOUGO | auto续杯300积分卡月卡 | ¥36.80 | in | aifka/1368 → wzyp PP47XS8K |
+| 官方授权 | Cursor Auto月卡 | ¥36.80 | in | aifka/318 → wzyp xxdlzs |
+| llz | Auto月卡 50号 | ¥22.90 | **OOS** | PriceMemo UELAUHQA |
+
+Trial: TXUN日卡 ¥2 / 官方授权天卡 ¥2.60 / YOUGO日卡 ¥3.68.
+
+## Suggest
+
+1. Day card first (especially TXUN 周月测过不退).  
+2. Month in-stock: **TXUN ¥30** or YOUGO/官方授权 **¥36.80**.  
+3. Watch llz ¥22.90 restock.  
+4. Do not buy 16688「个人小铺」Cursor rows for this type.
+
+## Write-back
+
+- reference: Cursor hunt notes + false friends + 个人小铺 A rule + API tips  
+- SKILL 1.4.1 deep filters  
+- this example 5

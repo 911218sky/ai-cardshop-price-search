@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.4.1 - 2026-10-28
+
+- **Cursor hunt notes** (live deep hunt): Type A lives on aifka/ldxp + independent 自助店 (TXUN); **16688 个人超市 ≈ empty for A** (C/F instead).
+- **False friends:** 续杯店名+额度卡=D; 不换号插件=B; 接码「换号」=F; aifka `q=换号` alone misleading.
+- **Buy rules:** day-card-first when 周月测过不退; cheapest A often OOS → watch + next in-stock.
+- Seed catalog: YOUGO / 官方授权 / TXUN / B-shop excludes; 16688 API tips (dedupe, rate-limit).
+- `examples.md` case 5 — Cursor Auto 月卡 deep; SKILL deep-step filters.
+- Version 1.4.1.
+
+## 1.4.0 - 2026-10-28
+
+- **Upstream projects & sites** in `reference.md`: PriceMemo/aifka/airadar/OpenPrice/16688/nosec + GitHub (`ai_price_radar`, `price-radar`, market-scanner, `ai-goofish*`) for agent study.
+- **Discovery channels:** Google / X (Twitter) query recipes; 个人小铺 via `/shops` + 16688 `S*` seeds.
+- **Seed shop catalog:** Cursor ldxp tokens (`WCT9GRNG`, `UELAUHQA`, …) and 16688 personal shop source ids (observed 2026-10-28; re-fetch).
+- `SKILL.md`: index/expansion for shops directory, X, 16688 personal; ban crack “续杯工具” as indexes.
+- `examples.md` case 4 — discovery / reference stack.
+- Version 1.4.0.
+
 ## 1.3.0 - 2026-10-26
 
 - **Generic skill:** product-agnostic core; examples are optional case studies, not the only brands.
