@@ -2,7 +2,7 @@
 
 Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese AI card shops and consumer markets — plus **write-back** of new brand / 暗号 / channel patterns into the skill itself.
 
-**Version:** 1.4.1  
+**Version:** 1.5.0  
 **Repo:** https://github.com/911218sky/ai-cardshop-price-search
 
 ## 30-second start
@@ -16,7 +16,7 @@ Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese
 ## What it does
 
 - Product-agnostic A–J taxonomy (换号池 / 插件 / 成品号 / 学生Claim / …).
-- Aggregators first; expand to 淘宝 / 闲鱼 / 合租 / official / materials when empty.
+- Aggregators first; use **PriceAI-class** for origin buy links / fee-inclusive floors; expand to 淘宝 / 闲鱼 / 合租 / official / materials when empty.
 - **个人小铺** via PriceMemo `/shops` + 16688 seeds; Google / X for seller discovery.
 - Coded-title fan-out when `无限续杯` is banned.
 - **Living Product playbook** + **upstream GitHub/sites** agents should study for connectors.
@@ -26,7 +26,7 @@ Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese
 ## When to use
 
 Any AI digital good on 卡网 / 淘宝 / 闲鱼 / 合租.  
-Triggers: 比价, 找店, 续杯, 无限续杯, 卡网, 链动, 16688, 闲鱼, 淘宝, 暗号, 小铺, aifka, …
+Triggers: 比价, 找店, 续杯, 无限续杯, 卡网, 链动, 16688, 闲鱼, 淘宝, 暗号, 小铺, aifka, BestAI, shuita, 成品号链接, …
 
 ## Requirements
 
@@ -66,7 +66,7 @@ ai-cardshop-price-search/
 |------|---------|
 | `SKILL.md` | Scout → taxonomy → deep → recommend → write-back |
 | `reference.md` | Recipes, playbook, **Google/X/小铺 discovery**, **upstream projects/sites**, seed shops |
-| `examples.md` | Cursor / Consensus / TRAE / discovery cases |
+| `examples.md` | Cursor / Consensus / TRAE / discovery / Muse cases |
 | `CHANGELOG.md` | Versions |
 | `LICENSE` | AGPL-3.0-or-later |
 

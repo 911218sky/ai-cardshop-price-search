@@ -3,21 +3,24 @@ name: ai-cardshop-price-search
 description: >
   Broad-then-narrow price hunt for any AI subscription, account, refill, or
   digital good on Chinese card-shop aggregators (aifka, PriceMemo, OpenPrice,
-  airadar), origin shops (16688, ldxp/wzyp), personal 小铺 directories, and consumer
-  markets (Taobao, 闲鱼/goofish, 合租, X/Twitter discovery). Maps delivery types
-  first (Auto pool, plugin, finished account, white account, SMS, student Claim,
-  materials), clarifies which type the user wants, deep-dives shops and prices,
-  then write-backs new product aliases / codewords / channel notes into this
-  skill. reference.md also lists upstream GitHub projects and site recipes for
-  agents. Use for Muse, Cursor, ChatGPT, Claude, Gemini, Grok, Windsurf, Devin,
-  TRAE/trea, Consensus, or any new brand. Trigger phrases: price compare, find
-  shop, refill, unlimited refill, card shop, ldxp, 16688, aifka, pricememo,
-  openprice, airadar, cheapest shop, xianyu, goofish, 小铺, 比价, 找店, 续杯,
-  无限续杯, 卡网, 链动, 闲鱼, 淘宝, 暗号, 便宜哪家, 学生优惠.
+  airadar, plus PriceAI-class: BestAI, PriceAI, AiCheap, shuita, 张大爷, 一可,
+  BoAIle), origin shops (16688, ldxp/wzyp/pay.ldxp), personal 小铺 directories, and
+  consumer markets (Taobao, 闲鱼/goofish, 合租, X/Twitter discovery). Maps
+  delivery types first (Auto pool, plugin, finished account, white account, SMS,
+  student Claim, materials), clarifies which type the user wants, deep-dives
+  shops and prices (including origin buy-link extraction via browser CDP when
+  aggregators strip hrefs), then write-backs new product aliases / codewords /
+  channel notes into this skill. reference.md also lists upstream GitHub
+  projects and site recipes for agents. Use for Muse/mune, Cursor, ChatGPT,
+  Claude, Gemini, Grok, Windsurf, Devin, TRAE/trea, Consensus, or any new brand.
+  Trigger phrases: price compare, find shop, refill, unlimited refill, card shop,
+  ldxp, 16688, aifka, pricememo, openprice, airadar, bestai, priceai, aicheap,
+  shuita, 张大爷, cheapest shop, xianyu, goofish, 小铺, 比价, 找店, 续杯,
+  无限续杯, 卡网, 链动, 闲鱼, 淘宝, 暗号, 便宜哪家, 学生优惠, 成品号链接.
 license: AGPL-3.0-or-later
 metadata:
   short-description: Generic broad-then-narrow AI cardshop hunt + skill write-back
-  version: 1.4.1
+  version: 1.5.0
 ---
 
 # AI Cardshop Price Search
@@ -43,6 +46,9 @@ Never treat marketing phrases ("无限续杯", "学生Pro", "官方") as one SKU
 | Card-net SKU dump | https://www.openprice.cc/card-products/{slug} | Low-level SKUs: white accounts, plugins, SMS, day cards |
 | Official-ish / 16688 channel map | https://airadar.vip | Finished official-tier; weak for refill/plugin |
 | Public market snapshot | https://ai.nosec.uk | Extra price/stock observation; risk-oriented |
+| Outbound / finished filters (PriceAI-class) | BestAI · PriceAI · AiCheap · shuita · 张大爷 · 一可 | **Buy links** + type tags; see reference Secondary aggregators |
+| Fee-inclusive floors | https://shuita.xyz | 到手价含手续费; shop pages `/shop/{TOKEN}` |
+| Same-source reseller spread | https://vs.yiketools.com/same-source/{id} | One pasted listing → multi-shop floor |
 | Consumer marketplaces | Taobao / Tmall / 闲鱼 (goofish) | Long-tail + Type A when 卡网 empty; titles often **coded** |
 | Social discovery | X (Twitter) + Google `site:` | Finds new personal shops / sellers → then open origin |
 | 合租 / account shops | PremLogin-class, AccountBoy-class | Shared vs private; normalize per month |
@@ -53,15 +59,16 @@ Never treat marketing phrases ("无限续杯", "学生Pro", "官方") as one SKU
 
 | Platform | Origin pattern | Notes |
 |----------|----------------|-------|
-| ldxp (链动) | `https://wzyp.cn/shop/{TOKEN}` | SPA; CAPTCHA common — aggregator first, user verifies |
-| 16688 | `https://www.16688.com.cn/shop/S{digits}` · `/shop/{alias}` · `/goods/{id}` | Homepage search weak — PriceMemo `/shops` + airadar as index |
+| ldxp (链动) | `https://wzyp.cn/shop/{TOKEN}` · `https://wzyp.cn/item/{id}` · `https://pay.ldxp.cn/item/{id}` | SPA; CAPTCHA common — aggregator first; AiCheap/BestAI often expose item URLs |
+| 16688 | `https://www.16688.com.cn/shop/S{digits}` · `/shop/{alias}` · `/goods/G{digits}` | Homepage search weak — PriceMemo `/shops` + airadar as index; goods pages often WAF |
 | Other ldxp systems | via aifka shop card `website_type` | Follow outbound on shop page |
+| Independent 自助站 | e.g. ikunlove.best · shop.txun.cc | Brand-specific; record in playbook when found |
 
 **Do not** start on 16688 homepage search alone. **Do not** assume airadar `{brand}-pro` lists refill SKUs.  
 **Do not** treat GitHub “Cursor 续杯工具” crack repos as shop indexes.  
 **Do not** equate「个人小铺」with Type A — 16688 超市 often sells C/F while Auto续杯 lives on ldxp + independent 自助店.
 
-Before harvesting a known brand, skim **Product playbook**, **Upstream projects & sites**, **Discovery channels**, **Seed shop catalog**, and **Cursor hunt notes** in [reference.md](reference.md).
+Before harvesting a known brand, skim **Product playbook**, **Upstream projects & sites** (incl. Secondary aggregators), **Discovery channels**, **Seed shop catalog**, **Extracting origin buy links**, and brand hunt notes (Cursor / Muse) in [reference.md](reference.md).
 
 ## When to use
 
@@ -71,7 +78,10 @@ Before harvesting a known brand, skim **Product playbook**, **Upstream projects 
 
 ## When primary indexes miss (required expansion)
 
-If aifka / PriceMemo / OpenPrice / airadar return **0 relevant hits**, do **not** stop:
+If aifka / PriceMemo / OpenPrice / airadar return **0 relevant hits**, do **not** stop.
+If they **have** hits but the user wants **origin buy links** / fee-inclusive floors / same-source spread, still hit **PriceAI-class** (BestAI / PriceAI / AiCheap / shuita / 张大爷 / 一可) — primary indexes often omit clickable `goods`/`item` hrefs (WebFetch strips them).
+
+When primary indexes miss:
 
 1. **WebSearch** brand + intent + 淘宝 / 闲鱼 / goofish / 合租 / 学生 / EDU / 代充 + **coded synonyms** + `16688` / 小铺
 2. **PriceMemo `/shops`** + Google `site:16688.com.cn/shop` for **个人小铺**
@@ -188,12 +198,13 @@ Unclear → `scout` then `deep`; end with `write-back` when something new was le
 Progress:
 - [ ] 1. Scope: product family, user phrase, budget/horizon, mode
 - [ ] 1b. Skim reference.md Product playbook for this brand (if row exists)
-- [ ] 2. Broad harvest: >=2 aggregators; if 0 → expand (PriceMemo/shops + 淘宝+闲鱼+X +合租/official/materials)
+- [ ] 2. Broad harvest: >=2 primary aggregators; if 0 → expand; if need links/floors → PriceAI-class even when primary hit
 - [ ] 2b. Synonym fan-out on 淘宝/闲鱼 when literal thin/banned
 - [ ] 2c. If user wants 个人小铺: seed catalog + `/shops` + 16688 source ids in reference.md
+- [ ] 2d. Origin buy links: AiCheap hrefs or browser CDP (前往购买/直达购买); re-classify each title
 - [ ] 3. Taxonomy map A–J
 - [ ] 4. Confirm type (unless user already named it)
-- [ ] 5. Deep: shops, SKUs, price, stock, links (incl. 闲鱼)
+- [ ] 5. Deep: shops, SKUs, price, stock, **origin links** (incl. 闲鱼)
 - [ ] 6. Cross-check; flag OOS/stale
 - [ ] 7. Recommend: floor in-type + official anchor; exclude wrong types
 - [ ] 8. Cite sources + codewords that hit + observed time
@@ -215,10 +226,12 @@ Infer missing fields; do not block scout on perfect scope.
 
 1. **aifka** `?brand={brand}&q={keyword}` — parse `page-bootstrap` `products[]`
 2. **PriceMemo** `/products/{slug}` or `/shops/{TOKEN}`
-3. **OpenPrice** `/card-products/{slug}`
+3. **OpenPrice** `/card-products/{slug}` (title-filter; slugs can mis-bucket)
 4. **airadar** `/prices/{slug}` — official-tier; empty for refill → say so and move on
+5. **PriceAI-class** (especially when user wants links or Type C): BestAI / PriceAI / AiCheap / shuita / 张大爷 — apply delivery filters (`delivery_account`, `finished_account`) before quoting ¥
+6. If user asks for **links**: extract origin URLs (AiCheap table hrefs or browser CDP on 「前往购买」/「直达购买」) — see reference **Extracting origin buy links**
 
-Then expansion + synonym fan-out as needed. Prices from aggregator, origin, or live marketplace only.
+Then expansion + synonym fan-out as needed. Prices from aggregator, origin, or live marketplace only. **Never price-compare across invite / 代刷 / 成品号 / 接码.**
 
 ## Step 3 — Taxonomy map (required)
 

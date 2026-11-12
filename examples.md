@@ -314,3 +314,61 @@ Trial: TXUN日卡 ¥2 / 官方授权天卡 ¥2.60 / YOUGO日卡 ¥3.68.
 - reference: Cursor hunt notes + false friends + 个人小铺 A rule + API tips  
 - SKILL 1.4.1 deep filters  
 - this example 5
+
+---
+
+# Worked Example 6 — Muse 成品号 10亿 token (Type C deep, 2026-11-12)
+
+> Lesson: Muse is **卡网-native**. Primary aggregators find supply; **PriceAI-class** unlocks origin buy links. Split invite / 代刷 / 接码 / 10B / 310B before quoting ¥.
+
+## Task
+
+**Goal:** cheap Muse **成品号 · 10亿 token** + **origin links**.  
+**Mode:** scout → deep Type **C** only. User typo **mune** = Muse.
+
+## Scout traps
+
+| Query / place | What appeared | Action |
+|---------------|---------------|--------|
+| BestAI / PriceAI low ¥0.02 | 邀请码 / 教程 / 批发对接 | Exclude — not C |
+| “额度帮刷 / 需要自备成品号” | Refill-only | Exclude from finished |
+| Meta/Muse 接马 | F 接码 | Separate |
+| BoAIle / OpenPrice under Grok Super | Mis-bucket Muse C | Harvest then re-classify |
+| airadar Muse Power/Max | Official $20/$100; thin card SKUs | Anchor only |
+
+## Channel map (this hunt)
+
+- **Primary:** aifka, PriceMemo (thin for Muse), OpenPrice (mis-bucket risk), airadar (`muse-account-10b`)
+- **PriceAI-class (required for links):** BestAI `?tags=delivery_account`, PriceAI `?mode=finished_account`, AiCheap `muse-account`, shuita「Muse AI 成品号」, 张大爷 `/account/Muse?sort=price`, 一可 same-source
+- **Origins:** `16688.com.cn/goods/G…`, `wzyp.cn/item/…`, `pay.ldxp.cn/item/…`, independent (ikunlove.best)
+
+## Link extraction method that worked
+
+1. AiCheap product table — WebFetch/CDP keeps origin `<a href>`.  
+2. BestAI filtered list — browser CDP scrape 「前往购买」/ Go to offer.  
+3. 张大爷 — 「直达购买」→ 16688/wzyp.  
+4. Always re-read title next to href (same page mixes types).
+
+## Observed floors (re-fetch; labels only)
+
+| Band | Approx | Notes |
+|------|--------|-------|
+| Floor C 10B | ~¥0.77–0.88 | 普号 / 短质保首登; 日抛风险 |
+| Mid C 10B | ~¥1.65–3.3 | 新批次 / 质保首登 common |
+| Higher C 10B | ~¥5–20 | 手搓 / 可换绑 / 微软邮箱 / 更长质保 claims |
+| C 310B | separate | Do not mix into 10B floor |
+
+## Suggest (process)
+
+1. Lock **C 10亿成品** (not invite / 助力 / 接码).  
+2. Quote floor + mid band; warn 质保首登 often 1h.  
+3. Prefer aggregators that yield **goods/item URLs**; user opens 16688 (WAF).  
+4. Write-back secondary aggregators + Muse notes.
+
+## Write-back
+
+- reference: Secondary aggregators; Extracting origin buy links; Muse hunt notes; playbook row  
+- SKILL 1.5.0 index + Step 2 PriceAI-class + checklist 2d  
+- this example 6  
+- CHANGELOG 1.5.0
+

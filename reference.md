@@ -20,7 +20,26 @@ Use as **implementation + indexing references**, not as “buy here” endorseme
 | airadar | https://airadar.vip | Official-tier / 16688 map; weak for Type A refill |
 | ai.nosec.uk | https://ai.nosec.uk | Public AI digital-goods price/stock snapshot (risk-oriented) |
 | 16688 | https://www.16688.com.cn | Origin card platform (`/shop/S…`, `/shop/{alias}`, `/goods/G…`) |
-| ldxp / 链动 origin | https://wzyp.cn/shop/{TOKEN} | Origin after aggregator points here; CAPTCHA common |
+| ldxp / 链动 origin | `https://wzyp.cn/shop/{TOKEN}` · `https://wzyp.cn/item/{id}` · `https://pay.ldxp.cn/item/{id}` | Origin after aggregator; item URLs common on AiCheap/BestAI |
+
+### Secondary aggregators (PriceAI-class — use for outbound links + cross-check)
+
+Primary indexes find *that supply exists*; these often expose **clickable origin goods URLs** (`16688.com.cn/goods/G…`, `wzyp.cn/item/…`, `pay.ldxp.cn/item/…`) that WebFetch alone may strip. **Always re-classify A–J** — many pages mix invite / SMS / finished.
+
+| Site | URL pattern | Strength |
+|------|-------------|----------|
+| BestAI | https://www.bestai.date/products/{slug} | Tag filters e.g. `?tags=delivery_account`; 「前往购买」→ origin |
+| PriceAI | https://priceai.cc/products/{slug} · https://www.priceai.io/products/{slug} | `?mode=finished_account` etc.; large Muse/Cursor tables |
+| AiCheap | https://aicheap.pro/products/{slug} | Product-table `<a href>` often **clean origin**; fee notes |
+| 水獭 shuita | https://shuita.xyz · `/shop/{TOKEN}` | Fee-inclusive 到手价; shop pages; Muse SKU under「更多」 |
+| 一可比价网 | https://vs.yiketools.com/same-source/{id} | Same-source multi-shop floor for one pasted listing |
+| AI张大爷 | https://aizhangdaye.com/account/{Brand} | Finished-account boards (was aizhangdama); 「直达购买」→ origin |
+| BoAIle | https://boaile.com/deals/ | Daily deals; **Muse often miscategorized under Grok Super** — still useful |
+| aiapiprice | https://aiapiprice.com/{brand} | Mixed SMS/invite/C; score columns — filter hard |
+| AIGOOD radar | https://aigood.chat/price-radar/products/{slug} | Sometimes embeds raw 16688 goods links in seller notes |
+| AI价网 | https://aiprice.club/market | Broad卡网 dump; search noisy — pair with brand playbook |
+
+**OpenPrice caveat (observed 2026-11-12):** Muse finished SKUs may appear under `grok-super` / `other-other` / SMS pages — do not trust slug name alone; filter title for 成品号 vs 接码/邀请码.
 
 ### Open-source projects to study (connectors, monitors, taxonomy)
 
@@ -29,6 +48,9 @@ Use as **implementation + indexing references**, not as “buy here” endorseme
 | [BeterXie/ai_price_radar](https://github.com/BeterXie/ai_price_radar) | PriceMemo backend | **16688 + ldxp shop intake**, public offer model, shop submit flow — mirror URL shapes & platform detection |
 | [lincwang123-bot/price-radar](https://github.com/lincwang123-bot/price-radar) | airadar | `platform16688` collectors, Cursor/Claude/GPT families, channel=`16688` |
 | [84376834111/gpt-account-market-scanner](https://github.com/84376834111/gpt-account-market-scanner) | Market scanner | Categories (Plus/Claude/Cursor/中转…), stock history, source scheduling |
+| [gm365/shuita-ai-price](https://github.com/gm365/shuita-ai-price) | 水獭 MCP + skill | `ai-price-mcp` live floors; fee-inclusive口径 |
+| [AIprice-club/aiprice](https://github.com/AIprice-club/aiprice) | AI价网 dump | Large shop/quote corpus for offline study |
+| [dimthink/PriceAI](https://github.com/dimthink/PriceAI) | PriceAI product | Card-net + official + 中转 taxonomy reference |
 | [Usagi-org/ai-goofish-monitor](https://github.com/Usagi-org/ai-goofish-monitor) | 闲鱼 AI monitor | Playwright + keyword/AI filter + notify — use when 卡网 miss / Type A on 闲鱼 |
 | [ddCat-main/ai-goofish](https://github.com/ddCat-main/ai-goofish) | 闲鱼 monitor | Keyword crawl + AI screen + mail notify |
 | [fancyboi999/goofish-cli](https://github.com/fancyboi999/goofish-cli) | 闲鱼 CLI/MCP | Agent-friendly marketplace automation |
@@ -111,7 +133,7 @@ Copy a blank row when a hunt discovers a new product. Keep aliases + channels; d
 | Brand / aliases | 暗号 / also-search | Primary channels | Common types | Noise / pitfalls |
 |-----------------|--------------------|------------------|--------------|------------------|
 | **Cursor** | Auto, Composer, 积分卡, 无感换号, cc续杯, 车位, 额度卡, 周期卡, 切号助手 | **Type A:** aifka/ldxp + **独立自助店** (e.g. TXUN); **not** 16688 超市. **Type C:** 16688/airadar strong. Soft titles: X/闲鱼 | A 积分卡/多号池/切号助手; B 不换号插件; C 质保Pro/Ultra; D 额度/周期卡; E 白号; F 接码 | See **Cursor hunt notes** below; airadar Pro ≠ Auto续杯; 16688「换号」常=接码 |
-| **Muse** / Meta Muse | 10亿token, 质保首登, 邀请码, 代刷邀请 | 卡网 + 16688 + PriceAI-class | C 成品号; invite; 代刷 (not always A) | ¥0.01 教程勿拍; 邀请码 ≠ 成品号 |
+| **Muse** / Meta Muse / mune | 10亿token, 310亿, 质保首登, 邀请码, 代刷/助力, 普号, CDK兑换, 手搓, 耐活王 | **卡网-native:** 16688 + ldxp (`wzyp`/`pay.ldxp`) + BestAI/PriceAI/AiCheap/shuita/张大爷; independent e.g. ikunlove.best | **C** 成品号 (10B/310B); invite; 代刷助力; F 接码 | See **Muse hunt notes**; ¥0.01–0.02 教程/对接勿拍; 邀请码≠成品号≠额度帮刷(自备号) |
 | **TRAE** / trea / traex | 会议系统, 按时间付费, 切号, 保留上下文, solo, 国际版, CN额度号 | **淘宝+闲鱼**; aifka often **0** | A 换号; C/代充 Pro; H rare | TRAE YOUNG = 球鞋; device 多号风控 |
 | **Consensus** | 学生, Claim, 15刀, 合租/独享 | **官方 Claim** + 淘宝/合租; aifka **0** | H 学生%; C 独享; Shared junk | ¥3–5「年卡」多为共享 |
 | **ChatGPT** | Plus, 成品号, 直充, 学生 | 卡网 + airadar + 合租 | C/H/I/J mixed | Separate 共享席位 |
@@ -152,15 +174,67 @@ https://www.openprice.cc/
 https://airadar.vip/?family={family}
 https://airadar.vip/prices/{slug}
 https://airadar.vip/prices/{slug}?channel=16688
+https://airadar.vip/prices/muse-account-10b
+https://airadar.vip/?family=muse
+
+# PriceAI-class (secondary — outbound + cross-check)
+https://www.bestai.date/products/{slug}
+https://www.bestai.date/products/muse-ai-account?tags=delivery_account
+https://priceai.cc/products/{slug}
+https://www.priceai.io/products/muse-ai?mode=finished_account
+https://aicheap.pro/products/{slug}
+https://aicheap.pro/products/muse-account
+https://shuita.xyz/
+https://aizhangdaye.com/account/{Brand}
+https://aizhangdaye.com/account/Muse?sort=price
+https://vs.yiketools.com/same-source/{id}
+https://boaile.com/deals/
+https://aiapiprice.com/{brand}
+https://aiprice.club/market
 
 # Origin
 https://wzyp.cn/shop/{TOKEN}
+https://wzyp.cn/item/{id}
+https://pay.ldxp.cn/item/{id}
 https://www.16688.com.cn/shop/{TOKEN}
 https://www.16688.com.cn/shop/S{digits}
-https://www.16688.com.cn/goods/{id}
+https://www.16688.com.cn/goods/G{digits}
 ```
 
 If slug 404s, homepage search / family page / WebSearch brand.
+
+## Extracting origin buy links (agent method)
+
+WebFetch markdown often **drops** 「前往购买」hrefs. When user asks for links:
+
+1. Prefer aggregators that keep `<a href>` in product tables (**AiCheap**, aifka product page “原始链接”).
+2. Else use **cursor-ide-browser**: navigate → filter type (e.g. BestAI Ready-made / `tags=delivery_account`) → CDP `Runtime.evaluate` collect `a[href]` whose text is 前往购买 / 直达购买 / Go to offer, with nearby title+price.
+3. Normalize: keep `16688.com.cn/goods/G…`, `wzyp.cn/item/…`, `pay.ldxp.cn/item/…`, independent shop URLs; strip UTM if desired.
+4. **Re-classify** each title before listing — same table mixes invite / SMS / C.
+5. 16688 origin pages often WAF/CAPTCHA — give goods URL + note user must open in browser.
+
+## Muse hunt notes (observed 2026-11-12 — re-fetch prices)
+
+**Channel routing:** Muse is **卡网-native** (16688 + ldxp). Taobao/闲鱼 not required when aggregators are thick. Official Muse Power (~$20) / Maximum (~$100) rarely appear as card SKUs on airadar.
+
+**Split types before comparing ¥:**
+
+| Bucket | Title cues | Notes |
+|--------|------------|-------|
+| Invite | 邀请码 | Floors ~¥0.02 often 教程/对接 — **勿拍** as account |
+| 代刷 / 助力 | 邀请助力, Token助力, 自助卡密刷额度 | Needs **buyer’s** account; not Type C |
+| 额度帮刷 | 需要自备成品号 | Refill-only — exclude from finished deep |
+| F 接码 | Meta/Muse 接马 | Registration aid — not finished |
+| **C 10亿成品** | 成品号, 普号10亿, CDK兑换, 账密+2FA, 邮箱\|取件地址 | Main buy path |
+| C 310亿 | 310亿 / 300亿 | Separate band; do not mix with 10B floors |
+
+**Delivery formats (both are C):** `账号|密码|2FA` vs `邮箱|邮件取件地址` — tell user which login path.
+
+**Noise filters:** ¥0.01–0.02 教程/批发对接; titles that only advertise 成品 while linking invite SKUs; BoAIle/OpenPrice mis-bucket under Grok Super.
+
+**Secondary aggregator tips:** BestAI `?tags=delivery_account`; PriceAI `?mode=finished_account`; AiCheap for origin hrefs; 一可 same-source for reseller spread; shuita for fee-inclusive floor among verified shops; 张大爷 `/account/Muse?sort=price`.
+
+**Ops notes sellers repeat:** fixed overseas residential IP (US/CA/JP/SG); fingerprint/incognito; no FB bind; rebind email after first login; short 质保首登 (often 1h).
 
 ## Seed shop catalog (Cursor / AI card — patterns only)
 
@@ -363,12 +437,27 @@ Shop HTML: grep `go?url=` or `wzyp.cn/shop/`.
 | Cheapest Auto月卡 OOS | Specialty shop sold out | Recommend next in-stock A; keep OOS as watch |
 | Switcher 周/月「测过不退」 | Policy on independent shops | Recommend day card trial first |
 | 16688 goods list empty/duplicate | Rate limit / bad paging | Sleep; dedupe goods_no; don't trust huge page counts |
+| User wants **buy links** but WebFetch has no href | Aggregator SPA / markdown strip | Browser + CDP scrape 「前往购买」; prefer AiCheap table links |
+| Muse ¥0.02 “成品” | Invite/tutorial bait | Filter 邀请码/教程; lock Type C 成品号 |
+| Muse “额度帮刷” in finished table | Refill SKU | Exclude unless user wants 代刷 |
+| OpenPrice Muse under grok-super | Mis-bucket | Title-filter 成品号; also check other-other / SMS pages |
+| BoAIle Muse under Super Grok deals | Mis-tag | Still harvest; re-classify before quote |
+| aizhangdama.com dead / redirect | Rebrand | Use https://aizhangdaye.com/account/{Brand} |
+| Primary aggregators have Muse but no goods URL | Index without outbound | Hit BestAI/PriceAI/AiCheap/张大爷 for origin |
 
 ## Optional: browser MCP
 
-Prefer curl + bootstrap for aifka. Use `cursor-ide-browser` for CAPTCHA shop UI or JS-only pages.
+Prefer curl + bootstrap for aifka. Use `cursor-ide-browser` for CAPTCHA shop UI, JS-only pages, or **origin-link extraction**.
 
-Sequence: `browser_tabs` list → `browser_navigate` → snapshot → extract → unlock.
+Sequence: `browser_navigate` → `browser_lock` → filter type → CDP `Runtime.evaluate` on buy `<a href>` → unlock.
+
+CDP snippet idea (adapt selectors per site):
+
+```js
+[...document.querySelectorAll('a')]
+  .filter(a => /前往购买|直达购买|Go to offer/i.test(a.textContent||''))
+  .map(a => ({ href: a.href, row: (a.closest('tr')||a.parentElement)?.innerText?.slice(0,200) }))
+```
 
 ## Expansion recipes (when 卡网 empty)
 

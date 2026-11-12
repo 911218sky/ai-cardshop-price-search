@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.5.0 - 2026-11-12
+
+- **PriceAI-class secondary aggregators:** BestAI, PriceAI, AiCheap, shuita, 一可比价, AI张大爷 (aizhangdaye), BoAIle, aiapiprice, AIGOOD, AI价网 — for outbound buy links + cross-check.
+- **Extracting origin buy links:** AiCheap hrefs + browser CDP on 前往购买/直达购买; re-classify titles; 16688 WAF note.
+- **Muse hunt notes** + playbook refresh (mune typo; invite≠代刷≠成品≠接码; 10B vs 310B; OpenPrice/BoAIle mis-bucket).
+- Upstream OSS: `gm365/shuita-ai-price`, `AIprice-club/aiprice`, `dimthink/PriceAI`.
+- SKILL: index rows, expansion-when-need-links, Step 2 filters, checklist 2d.
+- `examples.md` case 6 — Muse 10B Type C deep.
+- Version 1.5.0.
+
+
 ## 1.4.1 - 2026-10-28
 
 - **Cursor hunt notes** (live deep hunt): Type A lives on aifka/ldxp + independent 自助店 (TXUN); **16688 个人超市 ≈ empty for A** (C/F instead).
