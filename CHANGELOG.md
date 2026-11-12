@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.5.2 - 2026-11-13
+
+- **Recipes over frozen shops:** design principle + write-back rules — keep search/discovery loops, not permanent item/same-source ids or “cheapest shop is X”.
+- Muse notes rewritten as **discovery loop** (fan-out → same-source tool → shop crawl → PriceMemo/WebSearch → snapshots → independent); seeds = bootstrap only.
+- Version 1.5.2.
+
+## 1.5.1 - 2026-11-13
+
+- **Muse hunt notes:** listed floor ≠ in-stock floor; hunt/timing experience (later generalized in 1.5.2 away from sticky IDs).
+- Version 1.5.1.
+
 ## 1.5.0 - 2026-11-12
 
 - **PriceAI-class secondary aggregators:** BestAI, PriceAI, AiCheap, shuita, 一可比价, AI张大爷 (aizhangdaye), BoAIle, aiapiprice, AIGOOD, AI价网 — for outbound buy links + cross-check.

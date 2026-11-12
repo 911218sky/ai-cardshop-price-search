@@ -349,26 +349,25 @@ Trial: TXUN日卡 ¥2 / 官方授权天卡 ¥2.60 / YOUGO日卡 ¥3.68.
 3. 张大爷 — 「直达购买」→ 16688/wzyp.  
 4. Always re-read title next to href (same page mixes types).
 
-## Observed floors (re-fetch; labels only)
+## Observed floors (illustration only — re-fetch; do not treat as fixed)
 
-| Band | Approx | Notes |
-|------|--------|-------|
-| Floor C 10B | ~¥0.77–0.88 | 普号 / 短质保首登; 日抛风险 |
-| Mid C 10B | ~¥1.65–3.3 | 新批次 / 质保首登 common |
-| Higher C 10B | ~¥5–20 | 手搓 / 可换绑 / 微软邮箱 / 更长质保 claims |
-| C 310B | separate | Do not mix into 10B floor |
+| Band | Then-approx | How that band was found |
+|------|-------------|-------------------------|
+| Thin flash C 10B | sub-liquid | Same-source listed min often OOS — verify 有货 |
+| Liquid C 10B | multi-shop 有货 cluster | 一可同货源 + PriceAI/AiCheap outbound |
+| Premium C 10B | 手搓/长质保 claims | Title filter; separate from 普号 |
+| C 310B | separate discovery | Own same-source clusters; never mix into 10B |
 
 ## Suggest (process)
 
 1. Lock **C 10亿成品** (not invite / 助力 / 接码).  
-2. Quote floor + mid band; warn 质保首登 often 1h.  
-3. Prefer aggregators that yield **goods/item URLs**; user opens 16688 (WAF).  
-4. Write-back secondary aggregators + Muse notes.
+2. Run **discovery loop** (search fan-out → same-source 有货 → crawl shops → new origins); don’t reuse last hunt’s item ids.  
+3. Quote **有货地板** + **货多次低**; warn 质保首登 often 1h.  
+4. Write-back **recipes / traps**, not frozen “buy this wzyp id”.
 
 ## Write-back
 
-- reference: Secondary aggregators; Extracting origin buy links; Muse hunt notes; playbook row  
-- SKILL 1.5.0 index + Step 2 PriceAI-class + checklist 2d  
-- this example 6  
-- CHANGELOG 1.5.0
+- reference: Muse discovery loop; Secondary aggregators; origin extraction  
+- SKILL recipes-over-frozen-shops + checklist  
+- this example 6 (method, not prices as gospel)
 

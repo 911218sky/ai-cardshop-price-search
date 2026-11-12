@@ -133,7 +133,7 @@ Copy a blank row when a hunt discovers a new product. Keep aliases + channels; d
 | Brand / aliases | 暗号 / also-search | Primary channels | Common types | Noise / pitfalls |
 |-----------------|--------------------|------------------|--------------|------------------|
 | **Cursor** | Auto, Composer, 积分卡, 无感换号, cc续杯, 车位, 额度卡, 周期卡, 切号助手 | **Type A:** aifka/ldxp + **独立自助店** (e.g. TXUN); **not** 16688 超市. **Type C:** 16688/airadar strong. Soft titles: X/闲鱼 | A 积分卡/多号池/切号助手; B 不换号插件; C 质保Pro/Ultra; D 额度/周期卡; E 白号; F 接码 | See **Cursor hunt notes** below; airadar Pro ≠ Auto续杯; 16688「换号」常=接码 |
-| **Muse** / Meta Muse / mune | 10亿token, 310亿, 质保首登, 邀请码, 代刷/助力, 普号, CDK兑换, 手搓, 耐活王 | **卡网-native:** 16688 + ldxp (`wzyp`/`pay.ldxp`) + BestAI/PriceAI/AiCheap/shuita/张大爷; independent e.g. ikunlove.best | **C** 成品号 (10B/310B); invite; 代刷助力; F 接码 | See **Muse hunt notes**; ¥0.01–0.02 教程/对接勿拍; 邀请码≠成品号≠额度帮刷(自备号) |
+| **Muse** / Meta Muse / mune | 10亿token, 310亿, 质保首登, 邀请码, 代刷/助力, 普号, CDK兑换, 手搓, 耐活王 | **卡网-native** class: 16688 + ldxp + PriceAI-class; expand via discovery loop (not fixed shops) | **C** 成品号 (10B/310B/20B); invite; 代刷; F 接码 | **Muse hunt notes** = how to find more sources; 邀请≠成品≠代刷≠接码 |
 | **TRAE** / trea / traex | 会议系统, 按时间付费, 切号, 保留上下文, solo, 国际版, CN额度号 | **淘宝+闲鱼**; aifka often **0** | A 换号; C/代充 Pro; H rare | TRAE YOUNG = 球鞋; device 多号风控 |
 | **Consensus** | 学生, Claim, 15刀, 合租/独享 | **官方 Claim** + 淘宝/合租; aifka **0** | H 学生%; C 独享; Shared junk | ¥3–5「年卡」多为共享 |
 | **ChatGPT** | Plus, 成品号, 直充, 学生 | 卡网 + airadar + 合租 | C/H/I/J mixed | Separate 共享席位 |
@@ -213,33 +213,57 @@ WebFetch markdown often **drops** 「前往购买」hrefs. When user asks for li
 4. **Re-classify** each title before listing — same table mixes invite / SMS / C.
 5. 16688 origin pages often WAF/CAPTCHA — give goods URL + note user must open in browser.
 
-## Muse hunt notes (observed 2026-11-12 — re-fetch prices)
+## Muse hunt notes (experience / discovery — not a fixed shop list)
 
-**Channel routing:** Muse is **卡网-native** (16688 + ldxp). Taobao/闲鱼 not required when aggregators are thick. Official Muse Power (~$20) / Maximum (~$100) rarely appear as card SKUs on airadar.
+**Do not** treat past item ids, same-source ids, or “¥X is the floor” as permanent. Re-search every hunt; follow whatever shops aggregators surface today.
+
+**Channel routing (class, not shop):** Muse finished / invite / 代刷 is usually **卡网-native** (16688 + ldxp). Prefer aggregator → origin. Taobao/闲鱼 are optional long-tail if 卡网 thin. Official Power/Max rarely show as cheap card SKUs.
 
 **Split types before comparing ¥:**
 
 | Bucket | Title cues | Notes |
 |--------|------------|-------|
-| Invite | 邀请码 | Floors ~¥0.02 often 教程/对接 — **勿拍** as account |
-| 代刷 / 助力 | 邀请助力, Token助力, 自助卡密刷额度 | Needs **buyer’s** account; not Type C |
+| Invite | 邀请码 | Tiny ¥ often 教程/对接 — **勿拍** as account |
+| 代刷 / 助力 | 邀请好友, 邀请助力, Token助力, 自助卡密刷额度, CDK redeem | Buyer’s **own** account; bundle≈30 invites ≠ 拍30次×10B |
 | 额度帮刷 | 需要自备成品号 | Refill-only — exclude from finished deep |
-| F 接码 | Meta/Muse 接马 | Registration aid — not finished |
-| **C 10亿成品** | 成品号, 普号10亿, CDK兑换, 账密+2FA, 邮箱\|取件地址 | Main buy path |
-| C 310亿 | 310亿 / 300亿 | Separate band; do not mix with 10B floors |
+| F 接码 | Meta/Muse 接马 | Not finished |
+| **C 10亿成品** | 成品号, 普号10亿, 账密+2FA, 邮箱\|取件 | Main C path |
+| C 310亿 / 20亿 | 310亿, 300亿, 满额度, 20亿 | Separate bands; never mix into 10B floor |
 
-**Delivery formats (both are C):** `账号|密码|2FA` vs `邮箱|邮件取件地址` — tell user which login path.
+**Delivery formats (both C):** `账号|密码|2FA` vs `邮箱|邮件取件地址`.
 
-**Noise filters:** ¥0.01–0.02 教程/批发对接; titles that only advertise 成品 while linking invite SKUs; BoAIle/OpenPrice mis-bucket under Grok Super.
+**Noise:** 教程/批发对接; title says 成品但链到邀请码; OpenPrice/BoAIle mis-bucket under Grok; deviant sub-¥1 flags.
 
-**Secondary aggregator tips:** BestAI `?tags=delivery_account`; PriceAI `?mode=finished_account`; AiCheap for origin hrefs; 一可 same-source for reseller spread; shuita for fee-inclusive floor among verified shops; 张大爷 `/account/Muse?sort=price`.
+### Discovery loop (expand sources every run)
 
-**Ops notes sellers repeat:** fixed overseas residential IP (US/CA/JP/SG); fingerprint/incognito; no FB bind; rebind email after first login; short 质保首登 (often 1h).
+Run until you have **≥2 independent origin item URLs** of the locked type, or indexes exhausted:
 
-## Seed shop catalog (Cursor / AI card — patterns only)
+1. **Keyword fan-out on 一可 / aifka / PriceAI / AiCheap / 张大爷** — search brand + `成品号` / `10亿` / `310亿` / `邀请` / `接马` separately; open *new* result clusters, don’t reuse last chat’s links.
+2. **Same-source as a tool, not a bookmark** — from any live goods hit, open 一可「同货源聚合」to map reseller spread; sort **价格低有库存**. Different title families (账密2FA vs 邮箱取件 vs `新批次`) are different clusters — hunt each.
+3. **Follow shops outward** — PriceAI/aifka merchant or shop cards → visit shop → list *all* Muse SKUs there → new item ids. Low-price shops often restock under new ids.
+4. **PriceMemo `/shops` + WebSearch** `site:wzyp.cn` / `site:16688.com.cn` + brand — catch personal shops aggregators lag on.
+5. **Snapshot sites** (TokenPlus, mozhenzhen, AIGOOD) — use for history / leads only; always re-verify stock on origin or same-source.
+6. **Independent 自助站** — when chat/X/bio shows a domain, open it, classify SKUs, add domain pattern to playbook if stable (don’t freeze one SKU).
+7. **Stop condition** — quote today’s **有货地板** + **货多次低** (liquid band with many in-stock shops). If user wants lower, say what to watch (same-source 有货 min / new-batch titles), not “wait N weeks for fixed ¥”.
 
-Observed via PriceMemo directory + Cursor product pages **~2026-10-28**.  
-**Re-fetch stock/prices.** Use as hunt seeds (start URLs), not a buy list.
+### Listed floor ≠ in-stock floor
+
+Aggregator “最低价” often includes **缺货**. Always prefer 有货/库存少量 rows; re-check origin when PriceAI/AiCheap counters look stale.
+
+### Price-timing patterns (heuristic)
+
+- Thin flash listings below the liquid multi-shop band appear/vanish in **hours–1 day** — watch alerts, don’t bank on a multi-week dump.
+- Titles like `MM.DD新批次` often start expensive, then clones pull the liquid band down over **~1–3 days** — re-run discovery, don’t assume last week’s floor.
+- Structural collapses need supply shocks; absent that, waiting long rarely beats buying liquid 有货地板 + small buffer.
+
+**Link extraction:** AiCheap/Open shop hrefs; PriceAI「前往购买」/ merchant「前往原站」(CDP); 张大爷「直达购买」; strip UTM; re-classify title beside each href.
+
+**Ops sellers repeat:** fixed residential IP (US/CA/JP/SG); incognito/fingerprint; no FB; rebind email after first login; 质保首登 often 30min–3h; dirty IP → 人脸/waitlist usually **out of warranty**.
+
+## Seed shop catalog (bootstrap only — expand beyond this list)
+
+Observed via PriceMemo + Cursor pages **~2026-10-28**.  
+**Seeds = start URLs for a hunt, not the universe.** After opening a seed, crawl that shop’s full catalog, follow same-source neighbors, and WebSearch for shops *not* in this table. Re-fetch stock/prices; drop dead seeds on write-back.
 
 ### Cursor-heavy ldxp shops (PriceMemo tokens)
 
@@ -442,6 +466,9 @@ Shop HTML: grep `go?url=` or `wzyp.cn/shop/`.
 | Muse “额度帮刷” in finished table | Refill SKU | Exclude unless user wants 代刷 |
 | OpenPrice Muse under grok-super | Mis-bucket | Title-filter 成品号; also check other-other / SMS pages |
 | BoAIle Muse under Super Grok deals | Mis-tag | Still harvest; re-classify before quote |
+| Aggregator “最低价” below liquid band | Often 缺货 ghosts | Sort **价格低有库存**; quote 有货地板 separately |
+| Reusing last hunt’s item/same-source ids | Stale / OOS / renumbered | Re-run discovery loop; follow shops for new ids |
+| Sub-¥1 / deviant Muse C flags | Flash / bait / OOS | Confirm live stock before calling floor |
 | aizhangdama.com dead / redirect | Rebrand | Use https://aizhangdaye.com/account/{Brand} |
 | Primary aggregators have Muse but no goods URL | Index without outbound | Hit BestAI/PriceAI/AiCheap/张大爷 for origin |
 

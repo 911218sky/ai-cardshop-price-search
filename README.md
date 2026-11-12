@@ -2,7 +2,7 @@
 
 Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese AI card shops and consumer markets — plus **write-back** of new brand / 暗号 / channel patterns into the skill itself.
 
-**Version:** 1.5.0  
+**Version:** 1.5.2  
 **Repo:** https://github.com/911218sky/ai-cardshop-price-search
 
 ## 30-second start

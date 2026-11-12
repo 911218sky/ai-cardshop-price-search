@@ -20,7 +20,7 @@ description: >
 license: AGPL-3.0-or-later
 metadata:
   short-description: Generic broad-then-narrow AI cardshop hunt + skill write-back
-  version: 1.5.0
+  version: 1.5.2
 ---
 
 # AI Cardshop Price Search
@@ -35,6 +35,7 @@ Never treat marketing phrases ("无限续杯", "学生Pro", "官方") as one SKU
 2. **Living product memory** — new brands, slang, and "where supply actually lives" go into [reference.md](reference.md) product playbook + optional new example.
 3. **Channels are not equal** — some goods are 卡网-native (Cursor Auto); some are 淘宝/闲鱼-only (TRAE Type A); some need official Claim (Consensus student). Discover, then record.
 4. **Prices expire; patterns don't** — re-fetch prices every hunt; keep codewords / channel routing / type maps.
+5. **Recipes over frozen shops** — skill teaches *how to expand and verify*, not a fixed buy-list. Seed URLs / same-source IDs / item ids are **bootstrap examples only**; each hunt must re-search, follow new shops, and prefer discovery loops over memorized floors.
 
 ## Index first (agents: open these before guessing shops)
 
@@ -48,7 +49,7 @@ Never treat marketing phrases ("无限续杯", "学生Pro", "官方") as one SKU
 | Public market snapshot | https://ai.nosec.uk | Extra price/stock observation; risk-oriented |
 | Outbound / finished filters (PriceAI-class) | BestAI · PriceAI · AiCheap · shuita · 张大爷 · 一可 | **Buy links** + type tags; see reference Secondary aggregators |
 | Fee-inclusive floors | https://shuita.xyz | 到手价含手续费; shop pages `/shop/{TOKEN}` |
-| Same-source reseller spread | https://vs.yiketools.com/same-source/{id} | One pasted listing → multi-shop floor |
+| Same-source reseller spread | https://vs.yiketools.com/same-source/{id} | One listing → multi-shop; **sort 价格低有库存** — listed min ≠ in-stock floor |
 | Consumer marketplaces | Taobao / Tmall / 闲鱼 (goofish) | Long-tail + Type A when 卡网 empty; titles often **coded** |
 | Social discovery | X (Twitter) + Google `site:` | Finds new personal shops / sellers → then open origin |
 | 合租 / account shops | PremLogin-class, AccountBoy-class | Shared vs private; normalize per month |
@@ -138,35 +139,40 @@ This skill is a **shared memory**. After a hunt that teaches something new (new 
 
 ```
 Write-back:
-- [ ] reference.md Product playbook row (aliases, channels, type notes, noise filters)
-- [ ] New reusable codewords → generic coded table if cross-brand
-- [ ] examples.md case if pattern is non-obvious (optional but preferred)
+- [ ] reference.md Product playbook row (aliases, channel *classes*, type notes, noise filters)
+- [ ] New reusable codewords / search recipes → generic coded table if cross-brand
+- [ ] examples.md case if pattern is non-obvious (method + traps; prices illustrative only)
 - [ ] CHANGELOG.md entry + version bump in SKILL.md + README.md metadata
+- [ ] Prefer discovery recipes over freezing item/same-source ids as “the” source
 - [ ] Do NOT paste ephemeral day prices as forever facts — label "observed YYYY-MM-DD, re-fetch"
 ```
 
 ### What not to hardcode forever
 
-- Exact ¥/$ floors (re-fetch every run)
+- Exact ¥/$ floors or “the cheapest shop is X” (re-fetch every run)
+- Specific `wzyp.cn/item/…` / `same-source/{id}` / 16688 `G…` as if permanent
 - Shop stock counts
 - Official promo % without "verify live"
 
 ### What to keep forever
 
 - Which channel class carries the SKU (卡网 vs 淘宝/闲鱼 vs official Claim)
-- Alias / typo / 暗号 lists
+- Alias / typo / 暗号 lists + **search recipes** that find new shops
+- How to split types / listed-min vs 有货地板 / link-extraction methods
 - Brand-specific noise (e.g. TRAE YOUNG sneakers)
 - Type A vs B vs C pitfalls for that brand
+- Expansion order when indexes miss (PriceAI-class → `/shops` → 闲鱼/X → independent)
 
 If the skill lives only under Downloads (not `~/.cursor/skills`), still edit **this repo folder**; tell the user where files changed.
 
 ## Lowest price (within confirmed type)
 
 1. All **in-stock** SKUs of that type across expanded platforms.
-2. Normalize unit when possible (per day / month / year); keep currency.
-3. Floor + 1–2 backups.
-4. Official list (and student % if any) as anchor.
-5. Flag suspicious floors vs official (likely 共享/junk).
+2. On 一可 same-source / PriceAI: use **有货最低价**, not the absolute listed min (缺货 ghosts common).
+3. Normalize unit when possible (per day / month / year); keep currency.
+4. Quote **有货地板** + optional **货多次低** (liquid) when thin flash stock sits below.
+5. Official list (and student % if any) as anchor.
+6. Flag suspicious floors vs official (likely 共享/junk).
 
 ## Non-negotiables
 
