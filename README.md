@@ -2,7 +2,7 @@
 
 Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese AI card shops and consumer markets — plus **write-back** of new brand / 暗号 / channel patterns into the skill itself.
 
-**Version:** 1.5.2  
+**Version:** 1.5.4  
 **Repo:** https://github.com/911218sky/ai-cardshop-price-search
 
 ## 30-second start
@@ -16,8 +16,8 @@ Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese
 ## What it does
 
 - Product-agnostic A–J taxonomy (换号池 / 插件 / 成品号 / 学生Claim / …).
-- Aggregators first; use **PriceAI-class** for origin buy links / fee-inclusive floors; expand to 淘宝 / 闲鱼 / 合租 / official / materials when empty.
-- **个人小铺** via PriceMemo `/shops` + 16688 seeds; Google / X for seller discovery.
+- Aggregators first; use **AI价网 md/sitemap + 水獭 MCP + BiWu** to expand shops, then **PriceAI-class** for origin buy links / fee-inclusive floors; expand to 淘宝 / 闲鱼 / 合租 / official / materials when empty.
+- **个人小铺** via PriceMemo `/shops` + sitemap (`ldxp`/`catfk`/`16688`) seeds; Google / X for seller discovery.
 - Coded-title fan-out when `无限续杯` is banned.
 - **Living Product playbook** + **upstream GitHub/sites** agents should study for connectors.
 - Lowest **in-stock** price within the confirmed type + official anchor.

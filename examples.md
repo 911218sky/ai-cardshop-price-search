@@ -10,6 +10,8 @@
 | 3 | TRAE Type A | aifka 0 → 淘宝/闲鱼 + 暗号 (会议系统) |
 | 4 | Discovery seeds (Cursor + 个人小铺) | PriceMemo `/shops` + 16688-S* + Google/X recipes; upstream GitHub for connectors |
 | 5 | Cursor Auto 月卡 → A deep | 16688 个人店≠A; false friends B/D/F; TXUN/YOUGO/llz-OOS; day-card-first |
+| 6 | Muse 成品号 10亿 → C | PriceAI-class links; split invite/代刷/接码; discovery loop not frozen ids |
+| 7 | 「最便宜」below AiCheap | AI价网成品号→origin; BestAI CDP; independent sites; 闪货 vs 有货深度 |
 
 ---
 
@@ -370,4 +372,53 @@ Trial: TXUN日卡 ¥2 / 官方授权天卡 ¥2.60 / YOUGO日卡 ¥3.68.
 - reference: Muse discovery loop; Secondary aggregators; origin extraction  
 - SKILL recipes-over-frozen-shops + checklist  
 - this example 6 (method, not prices as gospel)
+
+---
+
+# Worked Example 7 — 「最便宜」below AiCheap floor (Muse C, 2026-11-13)
+
+> Lesson: AiCheap “卡网最低 ¥3.3” was **not** the real floor. Ultra-cheap Type C lived on AI价网 md + BestAI + independent sites. Steal the *ladder*, not yesterday’s item ids.
+
+## Task
+
+User: Muse 成品号 · want **最便宜**. Mode: deep Type **C** only.
+
+## Why a single aggregator failed
+
+| Source alone | What it said | Missed |
+|--------------|--------------|--------|
+| AiCheap `muse-account` | 卡网最低 ¥3.3 | ¥0.8–¥2 band on other indexes |
+| 水獭 `/sku/muse_account` | 到手 ~¥3.5 (fee-in) | Shelf flash / non-indexed independents |
+| Invite rows on every board | ¥0.02 “有货” | Not Type C — must filter |
+
+## Method that found the cheaper band
+
+1. **AI价网** `/md/market/category/muse.md` → keep **成品号** only → shop cards (e.g. smallbanana / yman / egou).  
+2. Shop page → CDP / outbound → `wzyp.cn/item/…` or `egou.fun/products/…`.  
+3. **BestAI** `?tags=delivery_account` → CDP `Go to offer` → `16688…/goods/G…`, `ikunlove.best`.  
+4. Open independent domains live; confirm stock.  
+5. Rank **闪货** vs **有货深度**; split 10亿 / 20亿 / 310亿.
+
+## Observed floors that day (illustration — re-fetch; do not freeze)
+
+| Rank | Band | Then-approx | How found |
+|------|------|-------------|-----------|
+| Flash | C 10B stock≤5 | sub-¥1 | AI价网 成品号 row → wzyp item |
+| Depth floor | C 10B stock≥20 | ~¥1 | AI价网 → yman wzyp item |
+| New-batch | C 10B | ~¥1.6 | BestAI Ready-made → 16688 goods |
+| Independent | C 10B | ~¥1.7 | BestAI href → ikunlove.best |
+| Quota upsell | C 20B | ~¥2 high stock | Same shop as 10B — **separate line** |
+| Liquid ref | C 10B | ~¥3.3–3.5 | AiCheap + 水獭 |
+
+## Suggest (process)
+
+1. Never answer「最便宜」from AiCheap alone.  
+2. Lead with **有货地板** (depth); mention flash only as optional gamble.  
+3. Write-back the ladder into skill — not “buy shop X forever”.
+
+## Write-back
+
+- reference: **Cheapest-in-type playbook** + failure rows (AiCheap subset, 帮刷, multi-quota)  
+- SKILL 「最便宜」ladder under Lowest price  
+- this example 7
 

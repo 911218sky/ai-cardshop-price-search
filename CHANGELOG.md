@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.5.4 - 2026-11-13
+
+- **Cheapest-in-type playbook:** when user asks 最便宜, do not stop at AiCheap/水獭 “卡网最低” — ladder AI价网 md(成品号) → shop outbound → BestAI Ready-made CDP → independent domains; rank 闪货 vs 有货深度 vs liquid.
+- SKILL Lowest-price section + examples case 7 rewritten from live Muse C hunt method (subset-floor trap, multi-quota split).
+- Version 1.5.4.
+
+## 1.5.3 - 2026-11-13
+
+- **Machine-readable discovery layer:** AI价网 `/md/*.md` + `sitemap-shops.xml` (CC BY cite), 水獭 `ai-price-mcp`/`llms.txt`, BiWu `/products/{slug}`, 链动/云猫 `goodsList` + ESA caution — teach *how to expand shops*, not build a local mirror.
+- License red lines: CardNav/PriceAI discovery-only; stock/dedupe 口径; `catfk.com` origin patterns.
+- Muse discovery loop step 0 = AI价网 md/sitemap; checklist 2a/2e; failure-table rows for ESA / fee-vs-shelf / sitemap fan-out.
+- Version 1.5.3.
+
 ## 1.5.2 - 2026-11-13
 
 - **Recipes over frozen shops:** design principle + write-back rules — keep search/discovery loops, not permanent item/same-source ids or “cheapest shop is X”.

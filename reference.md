@@ -37,9 +37,80 @@ Primary indexes find *that supply exists*; these often expose **clickable origin
 | BoAIle | https://boaile.com/deals/ | Daily deals; **Muse often miscategorized under Grok Super** — still useful |
 | aiapiprice | https://aiapiprice.com/{brand} | Mixed SMS/invite/C; score columns — filter hard |
 | AIGOOD radar | https://aigood.chat/price-radar/products/{slug} | Sometimes embeds raw 16688 goods links in seller notes |
-| AI价网 | https://aiprice.club/market | Broad卡网 dump; search noisy — pair with brand playbook |
+| AI价网 | https://aiprice.club/market · `/md/…` | Broad卡网 dump + **machine-readable** layer (below); CC BY 4.0 cite |
+| BiWu | https://biwu.ai/products/{slug} | Full-channel quote table per standard product; cite BiWu |
+| 水獭 MCP | `npx -y ai-price-mcp` · https://shuita.xyz/llms.txt | Fee-inclusive offers; cite 水獭 — no whole-site mirror |
 
 **OpenPrice caveat (observed 2026-11-12):** Muse finished SKUs may appear under `grok-super` / `other-other` / SMS pages — do not trust slug name alone; filter title for 成品号 vs 接码/邀请码.
+
+## Machine-readable discovery layer (recipes — expand shops every hunt)
+
+Use these as **how to find more sources**, not as a project to build a local mirror. Prefer live fetches; cite required attributions; obey license red lines.
+
+### 1) AI价网（CC BY 4.0 — must cite）
+
+| Endpoint | Use |
+|----------|-----|
+| https://aiprice.club/md/index.md | Category list + 有货最低价 overview |
+| https://aiprice.club/md/market/category/{slug}.md | Per-category **有货最便宜 50** shops (title/price/stock/shop link) |
+| https://aiprice.club/market/category/{slug}?all=1 | Full web table when md top-50 is thin |
+| https://aiprice.club/market/shop/{platform}-{id} | Shop card → 「去店铺看看」→ origin |
+| https://aiprice.club/sitemap-shops.xml | 1000+ shop seeds (`ldxp-*`, `catfk-*`, `16688-*`, …) |
+
+**Attribution:** 「AI价网（http://aiprice.club）」+ link. Data updates ~hourly.
+
+**Shop-id → origin recipe:** `ldxp-{token}` → try `https://wzyp.cn/shop/{TOKEN}` (case-insensitive); `catfk-{token}` → `https://catfk.com/shop/{TOKEN}`; `16688-{alias}` → PriceMemo/airadar or `16688.com.cn/shop/…`. Always confirm via 「去店铺看看」 when unsure.
+
+### 2) 链动小铺 / 云猫 — origin APIs (after browser session)
+
+- Public list: `POST /shopApi/Shop/goodsList` with `token` / `keywords` / `category_id` / `goods_type` / `current` / `pageSize`.
+- **ESA / CAPTCHA:** direct curl often blocked. Pass human check once in a real browser, keep cookies, reuse that session. Slider anti-bot detects robotic drag — fail → cool down, switch to aggregator outbound instead of hammering.
+- Item: `https://wzyp.cn/item/{goods_key}` · shop: `https://wzyp.cn/shop/{token}`; 云猫: `catfk.com` same path family.
+- Extra seed lists: GitHub `wzyp-view` shop packs (~250) + AI价网 sitemap — bootstrap only, then crawl.
+
+### 3) 水獭（fee-inclusive — cite, don’t mirror）
+
+| Tool / URL | Use |
+|------------|-----|
+| `npx -y ai-price-mcp` | `list_all_products` · `get_offers` · `list_shops` · `get_lowest_price` · `search_products` |
+| https://shuita.xyz/llms.txt | Live floor index without MCP |
+| https://shuita.xyz/sku/{sku} | e.g. `muse_account` |
+
+Prices = 到手价含手续费. Quote as 「水獭 http://shuita.xyz」. Do **not** bulk-mirror articles or whole site.
+
+### 4) BiWu（gap-fill）
+
+- Open https://biwu.ai/products/{slug} (e.g. `muse-account`, `cursor-account`, `chatgpt-plus`).
+- Each page = multi-channel table (channel, raw title, price, stock, updated, buy entry).
+- Cite 「BiWu.Ai」. Use to catch shops missing from primary indexes; still re-classify A–J.
+
+### 5) License red lines
+
+| Source | Allowed | Forbidden |
+|--------|---------|-----------|
+| AI价网 | Quote + cite CC BY 4.0 | — |
+| 水獭 / BiWu | Derived quote rows + attribution | Whole-site mirror / article dump |
+| CardNav / PriceAI | Discover shops, cross-check one SKU | Bulk copy / substitute corpus (DATA_LICENSE) |
+| AIPricedb / 模真真 | Later discovery leads | Treat snapshot as live stock |
+
+### Stock / dedupe 口径 (when merging observations)
+
+- Stock: number = units; `0` = OOS; boolean 有货/缺货 → `1`/`0`; unknown → `-1`.
+- Prefer **直抓 / origin** over aggregator quote when both describe the same `platform + shop_id + goods_id`.
+- Without goods id: fallback key `platform + shop + raw title + price` — still re-verify before calling floor.
+
+### Hunt order that expands sources (generic)
+
+```
+AI价网 md category (有货50)
+  → shop cards → origin shop full catalog
+  → sitemap new tokens (ldxp/catfk/16688) not yet visited
+水獭 get_offers / llms.txt (fee-inclusive cross-check)
+BiWu product table (gap-fill)
+AiCheap/BestAI/张大爷 (origin hrefs)
+一可 same-source 价格低有库存
+(optional) wzyp/catfk goodsList with browser cookies if ESA clears
+```
 
 ### Open-source projects to study (connectors, monitors, taxonomy)
 
@@ -191,11 +262,25 @@ https://vs.yiketools.com/same-source/{id}
 https://boaile.com/deals/
 https://aiapiprice.com/{brand}
 https://aiprice.club/market
+https://aiprice.club/md/index.md
+https://aiprice.club/md/market/category/{slug}.md
+https://aiprice.club/md/market/category/muse.md
+https://aiprice.club/md/market/category/cursor.md
+https://aiprice.club/sitemap-shops.xml
+https://aiprice.club/market/shop/{platform}-{id}
+https://biwu.ai/products/{slug}
+https://biwu.ai/products/muse-account
+https://biwu.ai/products/cursor-account
+https://shuita.xyz/llms.txt
+https://shuita.xyz/sku/{sku}
+https://shuita.xyz/sku/muse_account
 
 # Origin
 https://wzyp.cn/shop/{TOKEN}
 https://wzyp.cn/item/{id}
 https://pay.ldxp.cn/item/{id}
+https://catfk.com/shop/{TOKEN}
+https://catfk.com/item/{id}
 https://www.16688.com.cn/shop/{TOKEN}
 https://www.16688.com.cn/shop/S{digits}
 https://www.16688.com.cn/goods/G{digits}
@@ -238,17 +323,49 @@ WebFetch markdown often **drops** 「前往购买」hrefs. When user asks for li
 
 Run until you have **≥2 independent origin item URLs** of the locked type, or indexes exhausted:
 
-1. **Keyword fan-out on 一可 / aifka / PriceAI / AiCheap / 张大爷** — search brand + `成品号` / `10亿` / `310亿` / `邀请` / `接马` separately; open *new* result clusters, don’t reuse last chat’s links.
+0. **AI价网 md + sitemap** — `/md/market/category/muse.md` for 有货50; open new `ldxp-*` / `16688-*` / `catfk-*` shops; follow 「去店铺看看」then crawl *all* Muse SKUs in that shop.
+1. **Keyword fan-out on 一可 / aifka / PriceAI / AiCheap / 张大爷 / BiWu** — search brand + `成品号` / `10亿` / `310亿` / `邀请` / `接马` separately; open *new* result clusters, don’t reuse last chat’s links.
 2. **Same-source as a tool, not a bookmark** — from any live goods hit, open 一可「同货源聚合」to map reseller spread; sort **价格低有库存**. Different title families (账密2FA vs 邮箱取件 vs `新批次`) are different clusters — hunt each.
-3. **Follow shops outward** — PriceAI/aifka merchant or shop cards → visit shop → list *all* Muse SKUs there → new item ids. Low-price shops often restock under new ids.
-4. **PriceMemo `/shops` + WebSearch** `site:wzyp.cn` / `site:16688.com.cn` + brand — catch personal shops aggregators lag on.
-5. **Snapshot sites** (TokenPlus, mozhenzhen, AIGOOD) — use for history / leads only; always re-verify stock on origin or same-source.
-6. **Independent 自助站** — when chat/X/bio shows a domain, open it, classify SKUs, add domain pattern to playbook if stable (don’t freeze one SKU).
-7. **Stop condition** — quote today’s **有货地板** + **货多次低** (liquid band with many in-stock shops). If user wants lower, say what to watch (same-source 有货 min / new-batch titles), not “wait N weeks for fixed ¥”.
+3. **Follow shops outward** — PriceAI/aifka/AI价网 merchant cards → visit shop → list *all* Muse SKUs → new item ids (`wzyp` / `pay.ldxp` / `catfk` / `16688`).
+4. **水獭** `get_offers(muse_account)` or `/sku/muse_account` — fee-inclusive floor; cite 水獭; still open origin.
+5. **PriceMemo `/shops` + WebSearch** `site:wzyp.cn` / `site:catfk.com` / `site:16688.com.cn` + brand — catch personal shops aggregators lag on.
+6. **Snapshot sites** (TokenPlus, mozhenzhen, AIGOOD, CardNav/PriceAI as *leads only*) — history / discovery; never bulk-mirror; always re-verify stock on origin or same-source.
+7. **Independent 自助站** — when chat/X/bio shows a domain, open it, classify SKUs, add domain pattern to playbook if stable (don’t freeze one SKU).
+8. **Stop condition** — quote today’s **有货地板** + **货多次低** (liquid band with many in-stock shops). If user wants lower, say what to watch (same-source 有货 min / new-batch titles), not “wait N weeks for fixed ¥”.
 
 ### Listed floor ≠ in-stock floor
 
 Aggregator “最低价” often includes **缺货**. Always prefer 有货/库存少量 rows; re-check origin when PriceAI/AiCheap counters look stale.
+
+### Cheapest-in-type playbook (how ultra-low floors get found)
+
+**Why one site is not enough:** AiCheap “卡网最低” / 水獭 “可买最低价” are **curated / fee-inclusive subsets**. Shops that undercut them often appear first on **AI价网 category md** (有货50, tagged 成品号) or **BestAI Ready-made**, then only as origin `wzyp` / `16688` / independent URLs. Stopping at AiCheap alone misses the sub-liquid band.
+
+**Worked pattern (Muse Type C, 2026-11-13 — method, not forever prices):**
+
+| Step | What to open | What to keep | What to drop |
+|------|--------------|--------------|--------------|
+| A | `aiprice.club/md/market/category/muse.md` | Rows with 交付方式 **成品号** + 库存>0 | 邀请码 ¥0.02…, 助力, 代刷 |
+| B | Each shop `…/market/shop/{platform}-{id}` | CDP / 「去店铺看看」→ `wzyp.cn/item/…` or independent product URL | Shop homepage alone without item |
+| C | BestAI `muse-ai-account?tags=delivery_account` | CDP `Go to offer` + title next to price; stock≥1 | Invite / 「需要自备成品号」额度帮刷 |
+| D | Independent href hosts (`ikunlove.best`, `egou.fun`, …) | Live stock on that site | Aggregator-only claim |
+| E | AiCheap `muse-account` + 水獭 `/sku/muse_account` | Liquid / fee-inclusive bands for “safer” quote | Treating these as absolute floor |
+| F | Rank output | **闪货地板** (stock≤~5) · **有货地板** (stock≥~20) · optional **20亿/310亿** separate | Mixing quotas into one ¥ |
+
+**Link extraction that unlocked the cheap band:**
+
+1. AI价网 shop page: collect `a[href*=wzyp.cn/item]`, `pay.ldxp.cn/item`, `catfk.com/item`, `egou.fun/products`, `16688…/goods`.
+2. BestAI list: `a` text `Go to offer` / `前往购买` → keep `href` + parent row text (title+¥+stock).
+3. Always re-read title: same page mixes invite / C / F.
+
+**Ranking language for the user (copy):**
+
+1. Absolute cheapest **in-stock** of locked type (may be flash).  
+2. Best **stock-depth** floor (recommend when user says 最便宜 but needs buyable depth).  
+3. Liquid / fee-inclusive band (AiCheap + 水獭) as “won’t vanish in an hour” reference.  
+4. Explicitly list excluded invite / 帮刷 / 接码 so ¥0.02 noise is explained.
+
+**Genericize:** replace `muse` slug with any brand’s AI价网 category + BestAI/PriceAI finished filter + AiCheap product slug. Same ladder.
 
 ### Price-timing patterns (heuristic)
 
@@ -471,6 +588,16 @@ Shop HTML: grep `go?url=` or `wzyp.cn/shop/`.
 | Sub-¥1 / deviant Muse C flags | Flash / bait / OOS | Confirm live stock before calling floor |
 | aizhangdama.com dead / redirect | Rebrand | Use https://aizhangdaye.com/account/{Brand} |
 | Primary aggregators have Muse but no goods URL | Index without outbound | Hit BestAI/PriceAI/AiCheap/张大爷 for origin |
+| wzyp/catfk API 403 / ESA slider | Bot / no cookies | Use AI价网/AiCheap outbound; don’t brute-force slider |
+| Need more shops than seed catalog | Seeds incomplete by design | Parse `sitemap-shops.xml` + crawl new tokens |
+| Mixing 水獭 ¥ with AiCheap ¥ | Fee-inclusive vs shelf | Label 到手价 vs 标价; don’t merge without note |
+| Want to bulk-ingest CardNav/PriceAI | DATA_LICENSE | Discover/cross-check only; use AI价网 CC BY instead |
+| AI价网 Muse ¥0.02 rows | Invite / 助力 | Same invite filter; lock 成品号 before floor |
+| AiCheap “卡网最低” looks high vs chat | Subset / lag | Run Cheapest-in-type playbook A–D; don’t trust one aggregator floor |
+| BestAI ¥0.02 “成品号/代邀请” title | Invite bait in finished filter | Read full title; keep only pure 成品号 rows |
+| 「额度帮刷 / 需要自备成品号」near ¥1–2 | Refill SKU | Exclude from C floor |
+| Independent site in BestAI href | Gap shop | Open live stock on that domain; add pattern to playbook if stable |
+| Same shop 10亿 ¥1 and 20亿 ¥2 | Different quotas | Quote separately; never merge into one floor |
 
 ## Optional: browser MCP
 
