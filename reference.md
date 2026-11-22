@@ -341,6 +341,18 @@ Aggregator “最低价” often includes **缺货**. Always prefer 有货/库�
 
 **Why one site is not enough:** AiCheap “卡网最低” / 水獭 “可买最低价” are **curated / fee-inclusive subsets**. Shops that undercut them often appear first on **AI价网 category md** (有货50, tagged 成品号) or **BestAI Ready-made**, then only as origin `wzyp` / `16688` / independent URLs. Stopping at AiCheap alone misses the sub-liquid band.
 
+### First-answer floor contract (mandatory — 2026-11-22 write-back)
+
+**Problem:** Agent fetched AI价网 `muse.md` (rows ¥0.60 / ¥0.68 / ¥0.80 Type C) **and** AiCheap (¥0.88「卡网最低」) in the same turn, then told the user the floor was ¥0.88. User asked「还有没有更便宜」→ agent “found” the md rows that were already in hand. That looks like withholding; it is a **ranking bug**.
+
+**Contract — first message that claims 最低 / 最便宜 MUST:**
+
+1. **Lead with AI价网 有货50 type-filtered ascending ¥** (not AiCheap).  
+2. **Open shop cards for every row cheaper than AiCheap/水獭 band** and attach **origin item URLs** in that same answer.  
+3. **Also** scan BestAI/PriceAI finished for undercuts (e.g. ¥0.49「质保48小时」band) — flag suspicious warranty claims, still list as 闪货.  
+4. Put AiCheap/水獭 in a **separate**「液体 / 含费参考」section — never as absolute 最低.  
+5. If the hunt is still mid-ladder → say「还在挖更低档，暂报液体带 ¥X」— **do not** say「最低 ¥X」.
+
 **Worked pattern (Muse Type C, 2026-11-13 — method, not forever prices):**
 
 | Step | What to open | What to keep | What to drop |
@@ -354,13 +366,14 @@ Aggregator “最低价” often includes **缺货**. Always prefer 有货/库�
 
 **Link extraction that unlocked the cheap band:**
 
-1. AI价网 shop page: collect `a[href*=wzyp.cn/item]`, `pay.ldxp.cn/item`, `catfk.com/item`, `egou.fun/products`, `16688…/goods`.
+1. AI价网 shop page: collect `a[href*=wzyp.cn/item]`, `pay.ldxp.cn/item`, `catfk.com/item`, `egou.fun/products`, `16688…/goods`.  
+   Shop-page JSON/ListItem often pairs `CNY0.xx` with the item URL in one block — parse that pairing; don’t stop at shop homepage.
 2. BestAI list: `a` text `Go to offer` / `前往购买` → keep `href` + parent row text (title+¥+stock).
 3. Always re-read title: same page mixes invite / C / F.
 
 **Ranking language for the user (copy):**
 
-1. Absolute cheapest **in-stock** of locked type (may be flash).  
+1. Absolute cheapest **in-stock** of locked type (may be flash) — from **md/BestAI**, not AiCheap.  
 2. Best **stock-depth** floor (recommend when user says 最便宜 but needs buyable depth).  
 3. Liquid / fee-inclusive band (AiCheap + 水獭) as “won’t vanish in an hour” reference.  
 4. Explicitly list excluded invite / 帮刷 / 接码 so ¥0.02 noise is explained.
@@ -594,6 +607,8 @@ Shop HTML: grep `go?url=` or `wzyp.cn/shop/`.
 | Want to bulk-ingest CardNav/PriceAI | DATA_LICENSE | Discover/cross-check only; use AI价网 CC BY instead |
 | AI价网 Muse ¥0.02 rows | Invite / 助力 | Same invite filter; lock 成品号 before floor |
 | AiCheap “卡网最低” looks high vs chat | Subset / lag | Run Cheapest-in-type playbook A–D; don’t trust one aggregator floor |
+| First reply said 最低 = AiCheap, user finds cheaper next turn | Agent ranked liquid as absolute floor; md rows ignored | **First-answer floor contract**; Hard gate G0–G5; apologize as process miss if md already had cheaper same-type |
+| User「还有没有更便宜」after a 最低 claim | Either prior miss or true re-fetch delta | Re-run ladder; if cheaper rows were in prior md → admit miss + write-back; don’t pretend market moved |
 | BestAI ¥0.02 “成品号/代邀请” title | Invite bait in finished filter | Read full title; keep only pure 成品号 rows |
 | 「额度帮刷 / 需要自备成品号」near ¥1–2 | Refill SKU | Exclude from C floor |
 | Independent site in BestAI href | Gap shop | Open live stock on that domain; add pattern to playbook if stable |

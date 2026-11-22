@@ -2,7 +2,7 @@
 
 Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese AI card shops and consumer markets — plus **write-back** of new brand / 暗号 / channel patterns into the skill itself.
 
-**Version:** 1.5.4  
+**Version:** 1.5.5  
 **Repo:** https://github.com/911218sky/ai-cardshop-price-search
 
 ## 30-second start
@@ -10,8 +10,9 @@ Portable Markdown skill for **generic** broad-then-narrow price hunts on Chinese
 1. Name any **product** (Cursor 无限续杯, Muse 账号, TRAE 换号, Consensus 学生Pro, …) and constraints.
 2. Agent runs **`scout`**: ≥2 aggregators (or expansion), maps **delivery types** A–J.
 3. You pick a type → **`deep`** on that type only.
-4. Agent **write-backs** new aliases/channels into `reference.md` / `examples.md` when the hunt teaches something new.
-5. Re-check origin / 闲鱼 App before paying.
+4. If you ask **最便宜**: agent must finish **Hard gate** (AI价网有货50 → origin → BestAI undercut) before saying「最低」— AiCheap/水獭 are liquid参考 only.
+5. Agent **write-backs** new aliases/channels into `reference.md` / `examples.md` when the hunt teaches something new.
+6. Re-check origin / 闲鱼 App before paying.
 
 ## What it does
 

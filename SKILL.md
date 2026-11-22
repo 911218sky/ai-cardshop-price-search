@@ -22,7 +22,7 @@ description: >
 license: AGPL-3.0-or-later
 metadata:
   short-description: Generic broad-then-narrow AI cardshop hunt + skill write-back
-  version: 1.5.4
+  version: 1.5.5
 ---
 
 # AI Cardshop Price Search
@@ -187,18 +187,39 @@ If the skill lives only under Downloads (not `~/.cursor/skills`), still edit **t
 5. Official list (and student % if any) as anchor.
 6. Flag suspicious floors vs official (likely 共享/junk).
 
+### Hard gate — never say「最低」until the ladder is done
+
+**User-facing「最低价 / 最便宜 / 有没有更便宜」is a gated claim.**  
+Do **not** emit an absolute floor from AiCheap, 水獭, aifka, or any **single** aggregator — even if that site labels a row「卡网最低」.
+
+**Anti-pattern (Muse 2026-11-22):** first reply quoted AiCheap ¥0.88 as 最低 while the **already-fetched** AI价网 `muse.md` 有货50 already listed pure Type C at ¥0.60 / ¥0.68 / ¥0.80. That is a **process failure**, not “price changed later”.
+
+**Mandatory before the first floor number in chat:**
+
+| Gate | Required | Fail = |
+|------|----------|--------|
+| G0 | Type locked (or state assumed type + invite≠成品) | Do not quote ¥ as 成品地板 |
+| G1 | AI价网 `/md/market/category/{slug}.md` **有货最便宜50** parsed; keep locked type only | Incomplete |
+| G2 | Every candidate below the liquid/AiCheap band → shop card → **origin item URL** (`wzyp`/`16688`/`catfk`/独立) | Incomplete |
+| G3 | BestAI Ready-made **or** PriceAI `finished_account` scan for rows **below** AiCheap/水獭 “最低” | Incomplete |
+| G4 | AiCheap + 水獭 cited only as **liquid / 到手** band, never as absolute floor | Mis-rank |
+| G5 | First answer ranks: **闪货地板 → 有货深度地板 → 液体/含费带**; never hide cheaper md rows | Mis-rank |
+
+If any gate is skipped → say「比价未完成」and keep hunting — **do not** soft-sell a mid-band price as 最低.
+
 ### When user asks「最便宜」— do not stop at one aggregator's “卡网最低”
 
-AiCheap / 水獭 “最低” is a **verified subset**, not the universe. Ultra-cheap Type C often sits only on AI价网 md / BestAI / independent 自助站. Full playbook: [reference.md](reference.md) **Cheapest-in-type playbook**.
+AiCheap / 水獭 “最低” is a **verified subset**, not the universe. Ultra-cheap Type C often sits only on AI价网 md / BestAI / independent 自助站. Full playbook: [reference.md](reference.md) **Cheapest-in-type playbook** + **First-answer floor contract**.
 
 ```
-最便宜 hunt (after type lock):
+最便宜 hunt (after type lock) — complete BEFORE first「最低」line:
 1. AI价网 /md/market/category/{slug}.md → keep 交付方式=成品号 (drop 邀请码/助力)
-2. Each cheap shop card → 「去店铺看看」or CDP item href → origin (wzyp/catfk/16688/独立站)
-3. BestAI ?tags=delivery_account (or PriceAI finished) → CDP「Go to offer」rows below AiCheap floor
-4. Follow independent domains in those hrefs (ikunlove / egou / …) — open live stock
+2. Sort remaining by ¥ ascending; take all rows ≤ liquid/AiCheap band (not just top-1)
+3. Each cheap shop card → 「去店铺看看」or href → origin item (wzyp/catfk/16688/独立站)
+4. BestAI ?tags=delivery_account (or PriceAI finished) → rows below AiCheap floor + origin
 5. 水獭 /sku/{sku} = fee-inclusive liquid cross-check (often higher than shelf flash)
-6. Rank: 闪货地板 (stock≤5) vs 有货地板 (stock≥20) vs 货多次低; never mix 10B/20B/310B
+6. Rank in ONE reply: 闪货地板 · 有货深度地板 · 货多次低/含费; never mix quotas
+7. Only THEN recommend buy; if user asks「还有没有更便宜」→ re-run G1–G5, don’t invent
 ```
 
 ## Non-negotiables
@@ -211,10 +232,12 @@ AiCheap / 水獭 “最低” is a **verified subset**, not the universe. Ultra-
 6. **Examples are optional domain studies** — replace product freely.
 7. **Degrade honestly** — no invented shops/prices.
 8. **Expand until found or list exhausted.**
-9. **State lowest in-stock for confirmed type** + official anchor.
+9. **State lowest in-stock for confirmed type** + official anchor — **only after Hard gate G0–G5**.
 10. **Taobao/闲鱼 synonym fan-out** — one banned keyword ≠ empty market.
 11. **闲鱼 first-class** when 卡网 miss or titles soft.
 12. **Write back** durable product/channel/slang learnings into this skill.
+13. **Never promote a mid-band aggregator floor as 最低** when cheaper same-type rows already exist in AI价网 md / BestAI in the same hunt.
+14. **「还有没有更便宜」** = re-run cheapest ladder + shop outbound; explain if prior floor missed rows (skill bug), not “market moved” unless re-fetch proves it.
 
 ## Modes
 
@@ -240,10 +263,11 @@ Progress:
 - [ ] 3. Taxonomy map A–J
 - [ ] 4. Confirm type (unless user already named it)
 - [ ] 5. Deep: shops, SKUs, price, stock, **origin links** (incl. 闲鱼)
-- [ ] 6. Cross-check; flag OOS/stale
-- [ ] 7. Recommend: floor in-type + official anchor; exclude wrong types
+- [ ] 5b. **最便宜 Hard gate G0–G5** before any「最低价」sentence (AI价网50 → origin → BestAI/PriceAI undercut → AiCheap/水獭 as liquid only)
+- [ ] 6. Cross-check; flag OOS/stale; if md has cheaper same-type than AiCheap → md wins as 闪货/深度地板
+- [ ] 7. Recommend: 闪货地板 + 有货深度 + liquid; official anchor; exclude wrong types
 - [ ] 8. Cite sources + codewords that hit + observed time
-- [ ] 9. Write-back: playbook / examples / CHANGELOG if new learnings
+- [ ] 9. Write-back: playbook / examples / CHANGELOG if new learnings (incl. floor-ranking mistakes)
 ```
 
 ## Step 1 — Scope

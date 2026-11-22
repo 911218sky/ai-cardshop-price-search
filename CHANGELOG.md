@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.5 - 2026-11-22
+
+- **First-answer floor contract / Hard gate G0–G5:** forbid calling AiCheap/水獭「卡网最低」the absolute floor; first「最低」must finish AI价网有货50 type-filter → origin items → BestAI/PriceAI undercuts; AiCheap/水獭 = liquid band only.
+- Postmortem Muse C: same-turn md already had ¥0.60–0.68 but reply quoted ¥0.88 — ranking bug, not market move.
+- SKILL checklist 5b + non-negotiables 13–14; reference First-answer floor contract + failure rows; examples case 8.
+- Version 1.5.5.
+
 ## 1.5.4 - 2026-11-13
 
 - **Cheapest-in-type playbook:** when user asks 最便宜, do not stop at AiCheap/水獭 “卡网最低” — ladder AI价网 md(成品号) → shop outbound → BestAI Ready-made CDP → independent domains; rank 闪货 vs 有货深度 vs liquid.

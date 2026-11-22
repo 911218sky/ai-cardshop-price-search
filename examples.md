@@ -12,6 +12,7 @@
 | 5 | Cursor Auto 月卡 → A deep | 16688 个人店≠A; false friends B/D/F; TXUN/YOUGO/llz-OOS; day-card-first |
 | 6 | Muse 成品号 10亿 → C | PriceAI-class links; split invite/代刷/接码; discovery loop not frozen ids |
 | 7 | 「最便宜」below AiCheap | AI价网成品号→origin; BestAI CDP; independent sites; 闪货 vs 有货深度 |
+| 8 | 最便宜 Hard gate miss | Had md ¥0.60–0.68 but quoted AiCheap ¥0.88 — write First-answer floor contract |
 
 ---
 
@@ -421,4 +422,34 @@ User: Muse 成品号 · want **最便宜**. Mode: deep Type **C** only.
 - reference: **Cheapest-in-type playbook** + failure rows (AiCheap subset, 帮刷, multi-quota)  
 - SKILL 「最便宜」ladder under Lowest price  
 - this example 7
+
+---
+
+# Worked Example 8 — Hard gate: don’t quote AiCheap as 最低 when md is cheaper (Muse C, 2026-11-22)
+
+> Lesson: **having** the cheap rows is not enough — the **first** user-facing 最低 must rank AI价网/BestAI undercuts first. “Later found cheaper” after user pushback = skill process failure.
+
+## What went wrong
+
+| Turn | Data already in hand | What agent told user |
+|------|----------------------|----------------------|
+| 1 | AI价网 `muse.md` 有货50: Type C **¥0.60 / ¥0.68 / ¥0.80…**; AiCheap 「卡网最低」¥0.88; 水獭含费 ~¥3.95 | 「绝对最低 ¥0.88」+ 推荐 ¥1.34 深度 |
+| 2 | User: 还有没有更便宜 | Same md rows + BestAI ¥0.49 48h band + origin item links |
+
+Prices did not magically appear — **ranking skipped md floors**.
+
+## Correct first-answer shape (contract)
+
+```
+闪货/绝对地板: ¥0.49–0.68 + origin item URLs (md/BestAI)
+有货深度: ¥0.68 stock≥1000 or ¥1.3x 新批次 high stock
+液体/含费: AiCheap ¥0.88 · 水獭 ¥3.95  — labeled 参考 not 最低
+排除: 邀请码 ¥0.02 / 助力
+```
+
+## Skill fix written back
+
+- SKILL: **Hard gate G0–G5** + non-negotiables 13–14 + checklist 5b  
+- reference: **First-answer floor contract** + failure rows  
+- this example 8
 
